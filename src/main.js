@@ -770,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
         vi: {
             // Header
             header_subtitle: "Giám sát Inverter",
-            last_updated: "Cập nhật:",
+            last_updated: "",
             // Solar card
             solar_title: "Sản lượng Solar",
             todays_energy: "Năng lượng hôm nay:",
@@ -1304,7 +1304,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     simulatedBadge.classList.add("hidden");
                 }
 
-                if (updateTime) updateTime.innerText = `${t('last_updated')} ${lastUpdated || '--:--:--'}`;
+                if (updateTime) {
+                    const label = t('last_updated');
+                    updateTime.innerText = label ? `${label} ${lastUpdated || '--:--:--'}` : (lastUpdated || '--:--:--');
+                }
 
                 // 2. Update Solar production card
                 const p_pv = metrics.p_pv !== undefined ? metrics.p_pv : 0;
