@@ -1318,6 +1318,9 @@ document.addEventListener("DOMContentLoaded", () => {
             updateSolar(metrics);
             updateGrid(metrics);
             updateDetailedParams(metrics);
+            
+            // Hide skeletons since we received data
+            hideSkeletons();
         } else {
             console.warn("No data in Firebase.");
             if (statusText) statusText.innerText = "No Data in Firebase";
@@ -1328,6 +1331,47 @@ document.addEventListener("DOMContentLoaded", () => {
         if (statusText) statusText.innerText = "Firebase Error";
         if (statusBadge) statusBadge.className = "status-badge status-offline";
     });
+
+    // ========== INIT LUXURY FEATURES PT 2 ==========
+    // Init 3D card tilt
+    setTimeout(() => {
+        new CardTilt();
+    }, 500);
+
+    // Init button ripples
+    initButtonRipple();
+
+    // ========== SKELETON LOADING SYSTEM ==========
+    let skeletonDataLoaded = false;
+    
+    function showSkeletons() {
+        document.querySelectorAll('.skeleton-overlay').forEach(el => {
+            el.classList.add('active');
+        });
+    }
+    
+    function hideSkeletons() {
+        if (skeletonDataLoaded) return;
+        skeletonDataLoaded = true;
+        document.querySelectorAll('.skeleton-overlay').forEach(el => {
+            el.classList.remove('active');
+        });
+        // Hide full-page loader with smooth fade
+        const pageLoader = document.getElementById('pageLoader');
+        if (pageLoader) {
+            pageLoader.classList.add('hidden');
+            // Remove from DOM after transition
+            setTimeout(() => {
+                if (pageLoader.parentNode) pageLoader.remove();
+            }, 700);
+        }
+    }
+    
+    // Activate skeleton overlays immediately on page load
+    showSkeletons();
+    
+    // Fallback: hide skeletons after 8 seconds even if API fails
+    setTimeout(hideSkeletons, 8000);
 
 
 
