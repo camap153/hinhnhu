@@ -1370,29 +1370,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Activate skeleton overlays immediately on page load
     showSkeletons();
     
-    // Fallback: hide skeletons after 8 seconds even if API fails
-    setTimeout(hideSkeletons, 8000);
-
-
-
     // ========== Modal Control logic ==========
     function openModal() {
-        fetch("/api/settings")
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById("inverter_ip").value = data.inverter_ip || "";
-                document.getElementById("inverter_port").value = data.inverter_port || 8000;
-                document.getElementById("poll_interval").value = data.poll_interval || 5;
-                document.getElementById("dongle_serial").value = data.dongle_serial || "";
-                document.getElementById("inverter_serial").value = data.inverter_serial || "";
-                document.getElementById("force_simulation").checked = !!data.force_simulation;
-                document.getElementById("ui_language").value = currentLang;
-                
-                settingsModal.classList.remove("hidden");
-            })
-            .catch(err => {
-                console.error("Failed to load current settings: ", err);
-            });
+        document.getElementById("ui_language").value = currentLang;
+        settingsModal.classList.remove("hidden");
     }
 
     function closeModal() {
@@ -1415,44 +1396,15 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsForm.addEventListener("submit", (e) => {
         e.preventDefault();
         
-        const settings = {
-            inverter_ip: document.getElementById("inverter_ip").value,
-            inverter_port: parseInt(document.getElementById("inverter_port").value, 10),
-            poll_interval: parseInt(document.getElementById("poll_interval").value, 10),
-            dongle_serial: document.getElementById("dongle_serial").value,
-            inverter_serial: document.getElementById("inverter_serial").value,
-            force_simulation: document.getElementById("force_simulation").checked
-        };
-
         // Save language preference (stored in localStorage, not server config)
         const selectedLang = document.getElementById("ui_language").value;
         applyLanguage(selectedLang);
-
-        fetch("/api/settings", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(settings)
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === "success") {
-                closeModal();
-                // Immediately trigger poller update with the new settings
-                pollInverterData();
-                
-                // Re-align the polling interval
-                clearInterval(pollTimer);
-                pollTimer = setInterval(pollInverterData, settings.poll_interval * 1000);
-            } else {
-                alert("Failed to save settings: " + data.message);
-            }
-        })
-        .catch(err => {
-            alert("Error sending settings: " + err);
-        });
+        
+        closeModal();
+        alert("Settings saved locally! Note: hardware config changes require updating config.json manually.");
     });
+
+
 
     // ========== Initialize ==========
     // Apply saved language on page load
