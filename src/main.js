@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref, onValue } from "firebase/database";
 
 const firebaseConfig = {
@@ -14,7 +13,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const database = getDatabase(app);
 const systemRef = ref(database, 'system_data');
 
@@ -1275,63 +1273,255 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ========== Polling function for telemetry data ==========
-        function pollInverterData() {
-        // Now handled by Firebase listener below
+    function pollInverterData() {
+        // Now handled by Firebase realtime listener below
     }
 
     onValue(systemRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
-            // Re-trigger the same logic
-            const status = data.status || "Offline";
-            const isSimulated = !!data.is_simulated;
-            const lastUpdated = data.last_updated;
-            const metrics = data.metrics || {};
+                const status = data.status || "Offline";
+                const isSimulated = !!data.is_simulated;
+                const lastUpdated = data.last_updated;
+                const metrics = data.metrics || {};
 
-            // 1. Update Connection Header details
-            if (statusText) statusText.innerText = status;
-            if (statusBadge) {
-                statusBadge.className = "status-badge";
-                if (status.includes("Connected")) {
-                    statusBadge.classList.add("connected");
-                } else if (status.includes("Reconnecting")) {
-                    statusBadge.classList.add("reconnecting");
-                } else {
-                    statusBadge.classList.add("disconnected");
+                // 1. Update Connection Header details
+                if (statusText) statusText.innerText = status;
+                if (statusBadge) {
+                    statusBadge.className = "status-badge";
+                    if (status.includes("Connected")) {
+                        statusBadge.classList.add("connected");
+                    } else if (status.includes("Reconnecting")) {
+                        statusBadge.classList.add("reconnecting");
+                    } else {
+                        statusBadge.classList.add("disconnected");
+                    }
                 }
-            }
-            if (simulatedBadge) {
+
                 if (isSimulated) {
                     simulatedBadge.classList.remove("hidden");
                 } else {
                     simulatedBadge.classList.add("hidden");
                 }
-            }
-            if (updateTime) {
-                updateTime.innerText = `${t('last_updated')} ${lastUpdated || '--:--:--'}`;
-            }
 
-            // 2. Route metrics to respective update functions
-            updateOverview(metrics);
-            updatePowerFlow(metrics);
-            updateEnergy(metrics);
-            updateBattery(metrics);
-            updateSolar(metrics);
-            updateGrid(metrics);
-            updateDetailedParams(metrics);
-            
-            // Hide skeletons since we received data
-            hideSkeletons();
+                if (updateTime) updateTime.innerText = `${t('last_updated')} ${lastUpdated || '--:--:--'}`;
+
+                // 2. Update Solar production card
+                const p_pv = metrics.p_pv !== undefined ? metrics.p_pv : 0;
+                if (valSolarPower) {
+                    counter.updateValue('solarPower', p_pv);
+                }
+                if (valSolarEnergy) {
+                    const e_pv_day = metrics.e_pv_day !== undefined ? metrics.e_pv_day : 0.0;
+                    counter.updateValue('solarEnergy', e_pv_day);
+                }
+                
+                if (valPV1) valPV1.innerText = `${metrics.p_pv_1 || 0} W / ${metrics.v_pv_1 !== undefined ? metrics.v_pv_1.toFixed(1) : 0.0}V`;
+                if (valPV2) valPV2.innerText = `${metrics.p_pv_2 || 0} W / ${metrics.v_pv_2 !== undefined ? metrics.v_pv_2.toFixed(1) : 0.0}V`;
+
+                // Calculate real-time home consumption in Watts
+                // Dùng p_inv (AC output thực tế của inverter) thay vì p_pv (DC input)
+                // Công thức: Nhà đang dùng = p_inv + lưới cấp - bán lưới
+                const p_inv = metrics.p_inv || 0;
+                const homeWatts = Math.max(0, p_inv + (metrics.p_to_user || 0) - (metrics.p_to_grid || 0));
+                if (valHomeUsageW) {
+                    counter.updateValue('homeUsage', homeWatts);
+                }
+
+                // 3. Update Battery status card
+                const soc = metrics.soc !== undefined ? metrics.soc : 0;
+                if (valSOC) {
+                    counter.updateValue('batterySoc', soc);
+                }
+                if (socBar) socBar.style.width = `${soc}%`;
+                
+                // Update radial gauge
+                if (radialGauge) radialGauge.setValue(soc);
+
+                const p_charge = metrics.p_charge || 0;
+                const p_discharge = metrics.p_discharge || 0;
+                if (valBatPower) {
+                    const counterEl = valBatPower.querySelector('[data-counter="batPower"]');
+                    const currentDisplayed = counterEl ? parseFloat(counterEl.textContent) || 0 : 0;
+                    if (p_charge > 0) {
+                        valBatPower.innerHTML = `+<span data-counter="batPower">${currentDisplayed}</span>`;
+                        const nc = valBatPower.querySelector('[data-counter="batPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('batPower', p_charge);
+                        valBatStatus.innerText = t('bat_charging');
+                        valBatStatus.className = "status-badge-pill success";
+                    } else if (p_discharge > 0) {
+                        valBatPower.innerHTML = `-<span data-counter="batPower">${currentDisplayed}</span>`;
+                        const nc = valBatPower.querySelector('[data-counter="batPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('batPower', p_discharge);
+                        valBatStatus.innerText = t('bat_discharging');
+                        valBatStatus.className = "status-badge-pill warning";
+                    } else {
+                        valBatPower.innerHTML = `<span data-counter="batPower">${currentDisplayed}</span>`;
+                        const nc = valBatPower.querySelector('[data-counter="batPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('batPower', 0);
+                        valBatStatus.innerText = t('bat_idle');
+                        valBatStatus.className = "status-badge-pill";
+                    }
+                }
+
+                if (valBatVolt) valBatVolt.innerText = `${metrics.v_bat !== undefined ? metrics.v_bat.toFixed(1) : 0.0} V`;
+                if (valBatCurr) valBatCurr.innerText = `${metrics.bat_current !== undefined ? metrics.bat_current.toFixed(1) : 0.0} A`;
+                if (valBatTemp) valBatTemp.innerText = `${metrics.t_bat !== undefined ? metrics.t_bat : 0} °C`;
+                if (valBatChgDay) valBatChgDay.innerText = `${metrics.e_chg_day !== undefined ? metrics.e_chg_day.toFixed(1) : '0.0'} kWh`;
+                if (valBatDischgDay) valBatDischgDay.innerText = `${metrics.e_dischg_day !== undefined ? metrics.e_dischg_day.toFixed(1) : '0.0'} kWh`;
+
+                // 4. Update Grid card
+                const p_to_user = metrics.p_to_user || 0;
+                const p_to_grid = metrics.p_to_grid || 0;
+                if (valGridPower) {
+                    const counterEl = valGridPower.querySelector('[data-counter="gridPower"]');
+                    const currentDisplayed = counterEl ? parseFloat(counterEl.textContent) || 0 : 0;
+                    if (p_to_user > 0) {
+                        valGridPower.innerHTML = `+<span data-counter="gridPower">${currentDisplayed}</span>`;
+                        const nc = valGridPower.querySelector('[data-counter="gridPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('gridPower', p_to_user);
+                        valGridStatus.innerText = t('grid_importing');
+                        valGridStatus.className = "status-badge-pill warning";
+                    } else if (p_to_grid > 0) {
+                        valGridPower.innerHTML = `-<span data-counter="gridPower">${currentDisplayed}</span>`;
+                        const nc = valGridPower.querySelector('[data-counter="gridPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('gridPower', p_to_grid);
+                        valGridStatus.innerText = t('grid_exporting');
+                        valGridStatus.className = "status-badge-pill success";
+                    } else {
+                        valGridPower.innerHTML = `<span data-counter="gridPower">${currentDisplayed}</span>`;
+                        const nc = valGridPower.querySelector('[data-counter="gridPower"]');
+                        if (nc) nc.dataset.currentValue = String(currentDisplayed);
+                        counter.updateValue('gridPower', 0);
+                        valGridStatus.innerText = t('grid_connected');
+                        valGridStatus.className = "status-badge-pill";
+                    }
+                }
+
+                if (valGridVolt) valGridVolt.innerText = `${metrics.vacr !== undefined ? metrics.vacr.toFixed(1) : 0.0} V`;
+                if (valGridFreq) valGridFreq.innerText = `${metrics.fac !== undefined ? metrics.fac.toFixed(2) : 0.00} Hz`;
+                if (valGridPF) valGridPF.innerText = `${metrics.pf !== undefined ? metrics.pf.toFixed(3) : '0.000'}`;
+                if (valGridImpDay) valGridImpDay.innerText = `${metrics.e_to_user_day !== undefined ? metrics.e_to_user_day.toFixed(1) : '0.0'} kWh`;
+                if (valGridExpDay) valGridExpDay.innerText = `${metrics.e_to_grid_day !== undefined ? metrics.e_to_grid_day.toFixed(1) : '0.0'} kWh`;
+
+                // Total cumulative import/export
+                const valGridImpAll = document.getElementById("valGridImpAll");
+                const valGridExpAll = document.getElementById("valGridExpAll");
+                if (valGridImpAll) valGridImpAll.innerText = `${metrics.e_to_user_all !== undefined ? metrics.e_to_user_all.toFixed(1) : '0.0'} kWh`;
+                if (valGridExpAll) valGridExpAll.innerText = `${metrics.e_to_grid_all !== undefined ? metrics.e_to_grid_all.toFixed(1) : '0.0'} kWh`;
+
+                // 5. Update Load card
+                // "Nhà đang dùng" = tổng công suất nhà tiêu thụ
+                if (valLoadPower) {
+                    counter.updateValue('loadPower', homeWatts);
+                }
+                if (valLoadVA) valLoadVA.innerText = `${metrics.s_eps || 0} VA`;
+                if (valLoadVolt) valLoadVolt.innerText = `${metrics.v_eps_r !== undefined ? metrics.v_eps_r.toFixed(1) : 0.0} V`;
+                if (valInvTemp) valInvTemp.innerText = `${metrics.t_inner !== undefined ? metrics.t_inner : 0} °C`;
+                
+                // Always calculate the total Home Consumption dynamically
+                const pv = metrics.e_pv_day || 0;
+                const chg = metrics.e_chg_day || 0;
+                const dis = metrics.e_dischg_day || 0;
+                const imp = metrics.e_to_user_day || 0;
+                const exp = metrics.e_to_grid_day || 0;
+                const homeConsumption = Math.max(0, pv - chg + dis + imp - exp);
+                
+                if (valLoadEnergy) valLoadEnergy.innerText = `${homeConsumption.toFixed(1)} kWh`;
+                if (valHomeConsumDay) valHomeConsumDay.innerText = `${homeConsumption.toFixed(1)} kWh`;
+
+                // Display today's grid import (energy taken from grid)
+                if (valHomeGridImport) valHomeGridImport.innerText = `${imp.toFixed(1)} kWh`;
+
+                // Display EPS daily consumption directly
+                if (valEPSEnergy) {
+                    const epsEnergy = metrics.e_eps_day !== undefined ? metrics.e_eps_day : 0.0;
+                    valEPSEnergy.innerText = `${epsEnergy.toFixed(1)} kWh`;
+                }
+
+                // Update sparklines
+                if (sparklines) {
+                    sparklines.pushData('solar', p_pv);
+                    sparklines.pushData('load', homeWatts);
+                    sparklines.pushData('battery', soc);
+                    sparklines.pushData('grid', Math.max(p_to_user, p_to_grid));
+                }
+
+                // Update daily insights
+                const insightSolar = document.getElementById('insightSolar');
+                const insightBattery = document.getElementById('insightBattery');
+                const insightGrid = document.getElementById('insightGrid');
+                const insightHome = document.getElementById('insightHome');
+                
+                if (insightSolar) insightSolar.textContent = `${p_pv} W`;
+                if (insightBattery) insightBattery.textContent = `${soc}%`;
+                if (insightGrid) {
+                    const gridVal = Math.max(p_to_user, p_to_grid);
+                    insightGrid.textContent = `${gridVal} W`;
+                }
+                if (insightHome) insightHome.textContent = `${homeWatts} W`;
+
+                // 6. Update chart
+                if (liveChart) {
+                    const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    chartLabels.push(timeString);
+                    solarData.push(p_pv);
+                    loadData.push(homeWatts); // Tổng công suất nhà đang tiêu thụ
+                    batterySOCData.push(soc);
+
+                    if (chartLabels.length > maxDataPoints) {
+                        chartLabels.shift();
+                        solarData.shift();
+                        loadData.shift();
+                        batterySOCData.shift();
+                    }
+                    liveChart.update();
+                }
+
+                // Auto-scroll: khi PV = 0 (ban đêm) thì scroll xuống chart
+                if (typeof window.__pvZeroCount === 'undefined') window.__pvZeroCount = 0;
+                if (p_pv === 0) {
+                    window.__pvZeroCount++;
+                    if (window.__pvZeroCount >= 3) {
+                        const chartSec = document.querySelector('.chart-section');
+                        if (chartSec && liveChart) {
+                            const rect = chartSec.getBoundingClientRect();
+                            const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+                            if (!isVisible) {
+                                chartSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        }
+                    }
+                } else {
+                    window.__pvZeroCount = 0;
+                }
+                // Hide skeleton overlays — data has arrived!
+                hideSkeletons();
+                
+                // Show welcome toast on first successful data load
+                if (!window.__skeletonWelcomeShown) {
+                    window.__skeletonWelcomeShown = true;
+                    setTimeout(() => {
+                        
+                    }, 500);
+                }
         } else {
             console.warn("No data in Firebase.");
             if (statusText) statusText.innerText = "No Data in Firebase";
-            if (statusBadge) statusBadge.className = "status-badge status-offline";
+            if (statusBadge) statusBadge.className = "status-badge disconnected";
         }
     }, (error) => {
         console.error("Firebase error: ", error);
         if (statusText) statusText.innerText = "Firebase Error";
-        if (statusBadge) statusBadge.className = "status-badge status-offline";
+        if (statusBadge) statusBadge.className = "status-badge disconnected";
     });
+
+    // pollInverterData is now a no-op, Firebase listener handles everything
 
     // ========== INIT LUXURY FEATURES PT 2 ==========
     // Init 3D card tilt
@@ -1371,6 +1561,22 @@ document.addEventListener("DOMContentLoaded", () => {
     // Activate skeleton overlays immediately on page load
     showSkeletons();
     
+    // Fallback: hide skeletons after 8 seconds even if API fails
+    setTimeout(hideSkeletons, 8000);
+    
+    // Show welcome toast after data loads (or fallback)
+    setTimeout(() => {
+        if (!skeletonDataLoaded) {
+            // quick initial toast, data may still be loading
+        }
+    }, 1500);
+    
+    setTimeout(() => {
+        if (skeletonDataLoaded) {
+            
+        }
+    }, 2000);
+
     // ========== Modal Control logic ==========
     function openModal() {
         document.getElementById("ui_language").value = currentLang;
@@ -1404,8 +1610,6 @@ document.addEventListener("DOMContentLoaded", () => {
         closeModal();
         alert("Settings saved locally! Note: hardware config changes require updating config.json manually.");
     });
-
-
 
     // ========== Initialize ==========
     // Apply saved language on page load
