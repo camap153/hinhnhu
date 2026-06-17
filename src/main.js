@@ -1291,12 +1291,13 @@ document.addEventListener("DOMContentLoaded", () => {
             // 1. Update Connection Header details
             if (statusText) statusText.innerText = status;
             if (statusBadge) {
-                if (status.includes("Offline") || status.includes("failure")) {
-                    statusBadge.className = "status-badge status-offline";
+                statusBadge.className = "status-badge";
+                if (status.includes("Connected")) {
+                    statusBadge.classList.add("connected");
                 } else if (status.includes("Reconnecting")) {
-                    statusBadge.className = "status-badge status-warning";
-                } else if (status === "Connected" || status === "Connected (Simulated)") {
-                    statusBadge.className = "status-badge status-online";
+                    statusBadge.classList.add("reconnecting");
+                } else {
+                    statusBadge.classList.add("disconnected");
                 }
             }
             if (simulatedBadge) {
@@ -1307,7 +1308,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
             if (updateTime) {
-                updateTime.innerText = lastUpdated ? "Last updated: " + lastUpdated : "Last updated: --:--:--";
+                updateTime.innerText = `${t('last_updated')} ${lastUpdated || '--:--:--'}`;
             }
 
             // 2. Route metrics to respective update functions
