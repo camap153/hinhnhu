@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>JSON API</title></head>
+<body>
+<pre id="o">Đang tải...</pre>
+<script>
+fetch('https://luxpower123-69630-default-rtdb.asia-southeast1.firebasedatabase.app/system_data.json')
+.then(r=>r.json())
+.then(d=>{document.getElementById('o').textContent=JSON.stringify(d,null,2)})
+.catch(e=>{document.getElementById('o').textContent='Lỗi: '+e.message});
+</script>
+</body>
+</html>
