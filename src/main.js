@@ -848,7 +848,10 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentLang = localStorage.getItem("luxpower_lang") || "vi";
 
     function t(key) {
-        return (translations[currentLang] && translations[currentLang][key]) || translations.en[key] || key;
+        if (translations[currentLang] && translations[currentLang][key] !== undefined) {
+            return translations[currentLang][key];
+        }
+        return translations.en[key] || key;
     }
 
     function applyLanguage(lang) {
