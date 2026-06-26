@@ -908,12 +908,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const soc = metrics.soc !== undefined ? metrics.soc : 0;
         const v_bat = metrics.v_bat || 51.2; // V
-        const p_charge = metrics.p_charge || 0;
-        const p_discharge = metrics.p_discharge || 0;
+        const p_charge = Math.abs(metrics.p_charge || 0);
+        const p_discharge = Math.abs(metrics.p_discharge || 0);
 
         // Retrieve config preferences from localStorage with defaults
         const savedCapacity = parseInt(localStorage.getItem("luxpower_bat_capacity"));
-        const capacity = (!isNaN(savedCapacity) && savedCapacity > 0) ? savedCapacity : (metrics.bat_capacity || 314);
+        const capacity = (!isNaN(savedCapacity) && savedCapacity > 0) ? savedCapacity : 314;
         
         const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
         const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 25;
