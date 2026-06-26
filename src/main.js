@@ -233,13 +233,14 @@ class ToastSystem {
 
 // ========== RADIAL BATTERY GAUGE ==========
 class RadialGauge {
-    constructor(canvasId) {
+    constructor(canvasId, type = 'total') {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return;
         this.ctx = this.canvas.getContext('2d');
         this.value = 0;
         this.targetValue = 0;
         this.size = 100;
+        this.type = type;
         this.draw();
     }
 
@@ -283,71 +284,140 @@ class RadialGauge {
         const isCyber = document.body.classList.contains('theme-cyber');
 
         let gradient;
-        if (isCyber) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#0891b2');
-            gradient.addColorStop(0.5, '#22d3ee');
-            gradient.addColorStop(1, '#67e8f9');
-        } else if (isLight) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#059669');
-            gradient.addColorStop(0.5, '#10b981');
-            gradient.addColorStop(1, '#34d399');
-        } else if (document.body.classList.contains('theme-rosegold')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#b8860b');
-            gradient.addColorStop(0.5, '#d4a056');
-            gradient.addColorStop(1, '#f5d6a0');
-        } else if (document.body.classList.contains('theme-nature')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#047857');
-            gradient.addColorStop(0.5, '#34d399');
-            gradient.addColorStop(1, '#6ee7b7');
-        } else if (document.body.classList.contains('theme-glass')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#6366f1');
-            gradient.addColorStop(0.5, '#818cf8');
-            gradient.addColorStop(1, '#a5b4fc');
-        } else if (document.body.classList.contains('theme-synthwave')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#ff2d95');
-            gradient.addColorStop(0.5, '#ff6bc1');
-            gradient.addColorStop(1, '#00fff7');
-        } else if (document.body.classList.contains('theme-cyberpunk')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#ffd700');
-            gradient.addColorStop(0.5, '#ffab00');
-            gradient.addColorStop(1, '#00e5ff');
-        } else if (document.body.classList.contains('theme-ocean')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#0ea5e9');
-            gradient.addColorStop(0.5, '#2dd4bf');
-            gradient.addColorStop(1, '#5eead4');
-        } else if (document.body.classList.contains('theme-sunset')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#f59e0b');
-            gradient.addColorStop(0.5, '#ec4899');
-            gradient.addColorStop(1, '#8b5cf6');
-        } else if (document.body.classList.contains('theme-hacker')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#00aa00');
-            gradient.addColorStop(0.5, '#00ff41');
-            gradient.addColorStop(1, '#00e5ff');
-        } else if (document.body.classList.contains('theme-win10')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#0078d7');
-            gradient.addColorStop(0.5, '#4fc3f7');
-            gradient.addColorStop(1, '#8ab4f8');
-        } else if (document.body.classList.contains('theme-win11')) {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#0078d4');
-            gradient.addColorStop(0.5, '#60cdff');
-            gradient.addColorStop(1, '#8ab4f8');
+        if (this.type === 'usable') {
+            if (isCyber) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#db2777');
+                gradient.addColorStop(0.5, '#f472b6');
+                gradient.addColorStop(1, '#fbcfe8');
+            } else if (isLight) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0284c7');
+                gradient.addColorStop(0.5, '#0ea5e9');
+                gradient.addColorStop(1, '#38bdf8');
+            } else if (document.body.classList.contains('theme-rosegold')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#be123c');
+                gradient.addColorStop(0.5, '#e11d48');
+                gradient.addColorStop(1, '#fb7185');
+            } else if (document.body.classList.contains('theme-nature')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#d97706');
+                gradient.addColorStop(0.5, '#f59e0b');
+                gradient.addColorStop(1, '#fbbf24');
+            } else if (document.body.classList.contains('theme-glass')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#db2777');
+                gradient.addColorStop(0.5, '#ec4899');
+                gradient.addColorStop(1, '#f472b6');
+            } else if (document.body.classList.contains('theme-synthwave')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#8b5cf6');
+                gradient.addColorStop(0.5, '#a78bfa');
+                gradient.addColorStop(1, '#c084fc');
+            } else if (document.body.classList.contains('theme-cyberpunk')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#06b6d4');
+                gradient.addColorStop(0.5, '#00e5ff');
+                gradient.addColorStop(1, '#00fff7');
+            } else if (document.body.classList.contains('theme-ocean')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#2563eb');
+                gradient.addColorStop(0.5, '#3b82f6');
+                gradient.addColorStop(1, '#60a5fa');
+            } else if (document.body.classList.contains('theme-sunset')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#ca8a04');
+                gradient.addColorStop(0.5, '#eab308');
+                gradient.addColorStop(1, '#fde047');
+            } else if (document.body.classList.contains('theme-hacker')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#d97706');
+                gradient.addColorStop(0.5, '#f97316');
+                gradient.addColorStop(1, '#ff9f43');
+            } else if (document.body.classList.contains('theme-win10')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#4f46e5');
+                gradient.addColorStop(0.5, '#6366f1');
+                gradient.addColorStop(1, '#818cf8');
+            } else if (document.body.classList.contains('theme-win11')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0d9488');
+                gradient.addColorStop(0.5, '#14b8a6');
+                gradient.addColorStop(1, '#5eead4');
+            } else {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#3b82f6');
+                gradient.addColorStop(0.5, '#60a5fa');
+                gradient.addColorStop(1, '#93c5fd');
+            }
         } else {
-            gradient = ctx.createLinearGradient(0, 0, size, size);
-            gradient.addColorStop(0, '#10ac84');
-            gradient.addColorStop(0.5, '#1dd1a1');
-            gradient.addColorStop(1, '#55efc4');
+            if (isCyber) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0891b2');
+                gradient.addColorStop(0.5, '#22d3ee');
+                gradient.addColorStop(1, '#67e8f9');
+            } else if (isLight) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#059669');
+                gradient.addColorStop(0.5, '#10b981');
+                gradient.addColorStop(1, '#34d399');
+            } else if (document.body.classList.contains('theme-rosegold')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#b8860b');
+                gradient.addColorStop(0.5, '#d4a056');
+                gradient.addColorStop(1, '#f5d6a0');
+            } else if (document.body.classList.contains('theme-nature')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#047857');
+                gradient.addColorStop(0.5, '#34d399');
+                gradient.addColorStop(1, '#6ee7b7');
+            } else if (document.body.classList.contains('theme-glass')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#6366f1');
+                gradient.addColorStop(0.5, '#818cf8');
+                gradient.addColorStop(1, '#a5b4fc');
+            } else if (document.body.classList.contains('theme-synthwave')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#ff2d95');
+                gradient.addColorStop(0.5, '#ff6bc1');
+                gradient.addColorStop(1, '#00fff7');
+            } else if (document.body.classList.contains('theme-cyberpunk')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#ffd700');
+                gradient.addColorStop(0.5, '#ffab00');
+                gradient.addColorStop(1, '#00e5ff');
+            } else if (document.body.classList.contains('theme-ocean')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0ea5e9');
+                gradient.addColorStop(0.5, '#2dd4bf');
+                gradient.addColorStop(1, '#5eead4');
+            } else if (document.body.classList.contains('theme-sunset')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#f59e0b');
+                gradient.addColorStop(0.5, '#ec4899');
+                gradient.addColorStop(1, '#8b5cf6');
+            } else if (document.body.classList.contains('theme-hacker')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#00aa00');
+                gradient.addColorStop(0.5, '#00ff41');
+                gradient.addColorStop(1, '#00e5ff');
+            } else if (document.body.classList.contains('theme-win10')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0078d7');
+                gradient.addColorStop(0.5, '#4fc3f7');
+                gradient.addColorStop(1, '#8ab4f8');
+            } else if (document.body.classList.contains('theme-win11')) {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#0078d4');
+                gradient.addColorStop(0.5, '#60cdff');
+                gradient.addColorStop(1, '#8ab4f8');
+            } else {
+                gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#10ac84');
+                gradient.addColorStop(0.5, '#1dd1a1');
+                gradient.addColorStop(1, '#55efc4');
+            }
         }
 
         ctx.beginPath();
@@ -361,29 +431,32 @@ class RadialGauge {
         if (this.targetValue > 0) {
             ctx.beginPath();
             ctx.arc(cx, cy, radius, startAngle, endAngle);
-            ctx.strokeStyle = isCyber 
-                ? 'rgba(34, 211, 238, 0.2)' 
-                : document.body.classList.contains('theme-rosegold')
-                    ? 'rgba(212, 160, 86, 0.2)'
-                    : document.body.classList.contains('theme-nature')
-                        ? 'rgba(16, 185, 129, 0.2)'
-                    : document.body.classList.contains('theme-glass')
-                        ? 'rgba(129, 140, 248, 0.2)'
-                    : document.body.classList.contains('theme-synthwave')
-                        ? 'rgba(255, 45, 149, 0.2)'
-                    : document.body.classList.contains('theme-cyberpunk')
-                        ? 'rgba(255, 215, 0, 0.2)'
-                    : document.body.classList.contains('theme-ocean')
-                        ? 'rgba(45, 212, 191, 0.2)'
-                    : document.body.classList.contains('theme-sunset')
-                        ? 'rgba(251, 191, 36, 0.2)'
-                    : document.body.classList.contains('theme-hacker')
-                        ? 'rgba(0, 255, 65, 0.2)'
-                    : document.body.classList.contains('theme-win10')
-                        ? 'rgba(0, 120, 215, 0.2)'
-                    : document.body.classList.contains('theme-win11')
-                        ? 'rgba(0, 120, 212, 0.2)'
-                        : 'rgba(29, 209, 161, 0.2)';
+            ctx.strokeStyle = this.type === 'usable'
+                ? (isCyber ? 'rgba(244, 114, 182, 0.2)'
+                   : isLight ? 'rgba(14, 165, 233, 0.2)'
+                   : document.body.classList.contains('theme-rosegold') ? 'rgba(225, 29, 72, 0.2)'
+                   : document.body.classList.contains('theme-nature') ? 'rgba(245, 158, 11, 0.2)'
+                   : document.body.classList.contains('theme-glass') ? 'rgba(236, 72, 153, 0.2)'
+                   : document.body.classList.contains('theme-synthwave') ? 'rgba(167, 139, 250, 0.2)'
+                   : document.body.classList.contains('theme-cyberpunk') ? 'rgba(0, 229, 255, 0.2)'
+                   : document.body.classList.contains('theme-ocean') ? 'rgba(59, 130, 246, 0.2)'
+                   : document.body.classList.contains('theme-sunset') ? 'rgba(234, 179, 8, 0.2)'
+                   : document.body.classList.contains('theme-hacker') ? 'rgba(249, 115, 22, 0.2)'
+                   : document.body.classList.contains('theme-win10') ? 'rgba(99, 102, 241, 0.2)'
+                   : document.body.classList.contains('theme-win11') ? 'rgba(20, 184, 166, 0.2)'
+                   : 'rgba(96, 165, 250, 0.2)')
+                : (isCyber ? 'rgba(34, 211, 238, 0.2)' 
+                   : document.body.classList.contains('theme-rosegold') ? 'rgba(212, 160, 86, 0.2)'
+                   : document.body.classList.contains('theme-nature') ? 'rgba(16, 185, 129, 0.2)'
+                   : document.body.classList.contains('theme-glass') ? 'rgba(129, 140, 248, 0.2)'
+                   : document.body.classList.contains('theme-synthwave') ? 'rgba(255, 45, 149, 0.2)'
+                   : document.body.classList.contains('theme-cyberpunk') ? 'rgba(255, 215, 0, 0.2)'
+                   : document.body.classList.contains('theme-ocean') ? 'rgba(45, 212, 191, 0.2)'
+                   : document.body.classList.contains('theme-sunset') ? 'rgba(251, 191, 36, 0.2)'
+                   : document.body.classList.contains('theme-hacker') ? 'rgba(0, 255, 65, 0.2)'
+                   : document.body.classList.contains('theme-win10') ? 'rgba(0, 120, 215, 0.2)'
+                   : document.body.classList.contains('theme-win11') ? 'rgba(0, 120, 212, 0.2)'
+                   : 'rgba(29, 209, 161, 0.2)');
             ctx.lineWidth = lineWidth + 4 * dpr;
             ctx.lineCap = 'round';
             ctx.stroke();
@@ -684,7 +757,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sparklines = new SparklineManager();
     const counter = new AnimatedCounter();
     const radialGauge = new RadialGauge('radialGauge');
-    const usableRadialGauge = new RadialGauge('usableRadialGauge');
+    const usableRadialGauge = new RadialGauge('usableRadialGauge', 'usable');
     
     // Expose to global scope
     window.__toast = toastSystem;
