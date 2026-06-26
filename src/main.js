@@ -921,6 +921,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const savedEfficiency = parseFloat(localStorage.getItem("luxpower_inverter_efficiency"));
         const efficiency = (!isNaN(savedEfficiency) && savedEfficiency > 0) ? savedEfficiency : 0.95;
 
+        // Calculate remaining usable energy in kWh
+        const deltaSoc = Math.max(0, soc - soc_cutoff);
+        const remainingWh = (capacity * v_bat) * (deltaSoc / 100) * efficiency;
+        const remainingKwh = remainingWh / 1000;
+        
+        const radialGaugeLabel = document.getElementById('radialGaugeLabel') || document.querySelector('.radial-gauge-label');
+        if (radialGaugeLabel) {
+            radialGaugeLabel.innerText = `${remainingKwh.toFixed(1)} kWh`;
+        }
+
         if (p_charge > 0) {
             const remainingSoc = 100 - soc;
             if (remainingSoc <= 0) {
