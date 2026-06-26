@@ -4640,6 +4640,7 @@ body.theme-win11 .progress-fill {
     font-weight: 700;
     color: var(--text-primary);
     text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    white-space: nowrap;
 }
 
 /* Status Pill Badges */
