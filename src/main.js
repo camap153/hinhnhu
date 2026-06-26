@@ -791,7 +791,7 @@ document.addEventListener("DOMContentLoaded", () => {
             bat_idle: "CHỜ",
             charge_time_prefix: "Thời gian sạc đầy: ",
             discharge_time_prefix: "Thời gian sử dụng: ",
-            idle_time_text: "Không sạc/xả",
+            idle_time_text: "Chế độ chờ",
             // Grid card
             grid_title: "Kết nối lưới điện",
             frequency: "Tần số:",
