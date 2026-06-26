@@ -862,6 +862,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let lastInverterMetrics = null;
 
+    function formatRemainingTime(totalMinutes) {
+        if (!isFinite(totalMinutes) || totalMinutes < 0) return "--";
+        
+        const m = totalMinutes % 60;
+        const totalHours = Math.floor(totalMinutes / 60);
+        const isVi = currentLang === "vi";
+        
+        if (totalHours >= 24) {
+            const d = Math.floor(totalHours / 24);
+            const h = totalHours % 24;
+            const dayLabel = isVi ? "ngày" : (d === 1 ? "day" : "days");
+            const hourLabel = isVi ? "giờ" : (h === 1 ? "hour" : "hours");
+            const minLabel = isVi ? "phút" : (m === 1 ? "min" : "mins");
+            
+            let result = `${d} ${dayLabel} ${h} ${hourLabel}`;
+            if (m > 0) {
+                result += ` ${m} ${minLabel}`;
+            }
+            return result;
+        } else if (totalHours > 0) {
+            const hourLabel = isVi ? "giờ" : (totalHours === 1 ? "hour" : "hours");
+            const minLabel = isVi ? "phút" : (m === 1 ? "min" : "mins");
+            
+            let result = `${totalHours} ${hourLabel}`;
+            if (m > 0) {
+                result += ` ${m} ${minLabel}`;
+            }
+            return result;
+        } else {
+            const minLabel = isVi ? "phút" : (m === 1 ? "min" : "mins");
+            return `${m} ${minLabel}`;
+        }
+    }
+
     function updateChargeTimePrediction(metrics) {
         if (!chargeTimeBar || !chargeTimeText || !metrics) return;
         
@@ -882,9 +916,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const hours = remainingWh / p_charge;
                 if (isFinite(hours) && hours > 0) {
                     const totalMinutes = Math.round(hours * 60);
-                    const h = Math.floor(totalMinutes / 60);
-                    const m = totalMinutes % 60;
-                    const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                    const timeStr = formatRemainingTime(totalMinutes);
                     const prefix = t("charge_time_prefix");
                     chargeTimeText.innerText = `${prefix}${timeStr}`;
                 } else {
@@ -904,9 +936,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const hours = remainingWh / p_discharge;
                 if (isFinite(hours) && hours > 0) {
                     const totalMinutes = Math.round(hours * 60);
-                    const h = Math.floor(totalMinutes / 60);
-                    const m = totalMinutes % 60;
-                    const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                    const timeStr = formatRemainingTime(totalMinutes);
                     const prefix = t("discharge_time_prefix");
                     chargeTimeText.innerText = `${prefix}${timeStr}`;
                 } else {
