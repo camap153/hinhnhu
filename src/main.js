@@ -711,6 +711,9 @@ document.addEventListener("DOMContentLoaded", () => {
             bat_charging: "CHARGING",
             bat_discharging: "DISCHARGING",
             bat_idle: "IDLE",
+            charge_time_prefix: "Time to Full: ",
+            discharge_time_prefix: "Time to Empty: ",
+            idle_time_text: "No charge/discharge",
             // Grid card
             grid_title: "Grid Connection",
             frequency: "Frequency:",
@@ -786,6 +789,9 @@ document.addEventListener("DOMContentLoaded", () => {
             bat_charging: "ĐANG SẠC",
             bat_discharging: "ĐANG XẢ",
             bat_idle: "CHỜ",
+            charge_time_prefix: "Thời gian sạc đầy: ",
+            discharge_time_prefix: "Thời gian sử dụng: ",
+            idle_time_text: "Không sạc/xả",
             // Grid card
             grid_title: "Kết nối lưới điện",
             frequency: "Tần số:",
@@ -854,6 +860,69 @@ document.addEventListener("DOMContentLoaded", () => {
         return translations.en[key] || key;
     }
 
+    let lastInverterMetrics = null;
+
+    function updateChargeTimePrediction(metrics) {
+        if (!chargeTimeBar || !chargeTimeText || !metrics) return;
+        
+        const soc = metrics.soc !== undefined ? metrics.soc : 0;
+        const capacity = metrics.bat_capacity || 100; // Ah
+        const v_bat = metrics.v_bat || 51.2; // V
+        const p_charge = metrics.p_charge || 0;
+        const p_discharge = metrics.p_discharge || 0;
+
+        if (p_charge > 0) {
+            const remainingSoc = 100 - soc;
+            if (remainingSoc <= 0) {
+                chargeTimeText.innerText = currentLang === "vi" ? "Đầy pin" : "Battery Full";
+                chargeTimeBar.style.width = "100%";
+                chargeTimeBar.style.background = "linear-gradient(90deg, #10ac84, var(--color-battery, #2ecc71))";
+            } else {
+                const remainingWh = (capacity * v_bat) * (remainingSoc / 100);
+                const hours = remainingWh / p_charge;
+                if (isFinite(hours) && hours > 0) {
+                    const totalMinutes = Math.round(hours * 60);
+                    const h = Math.floor(totalMinutes / 60);
+                    const m = totalMinutes % 60;
+                    const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                    const prefix = t("charge_time_prefix");
+                    chargeTimeText.innerText = `${prefix}${timeStr}`;
+                } else {
+                    const prefix = t("charge_time_prefix");
+                    chargeTimeText.innerText = `${prefix}--`;
+                }
+                chargeTimeBar.style.width = `${soc}%`;
+                chargeTimeBar.style.background = "linear-gradient(90deg, #0be881, #05c46b)";
+            }
+        } else if (p_discharge > 0) {
+            const remainingSoc = soc;
+            if (remainingSoc <= 0) {
+                chargeTimeText.innerText = currentLang === "vi" ? "Hết pin" : "Battery Empty";
+                chargeTimeBar.style.width = "0%";
+            } else {
+                const remainingWh = (capacity * v_bat) * (remainingSoc / 100);
+                const hours = remainingWh / p_discharge;
+                if (isFinite(hours) && hours > 0) {
+                    const totalMinutes = Math.round(hours * 60);
+                    const h = Math.floor(totalMinutes / 60);
+                    const m = totalMinutes % 60;
+                    const timeStr = h > 0 ? `${h}h ${m}m` : `${m}m`;
+                    const prefix = t("discharge_time_prefix");
+                    chargeTimeText.innerText = `${prefix}${timeStr}`;
+                } else {
+                    const prefix = t("discharge_time_prefix");
+                    chargeTimeText.innerText = `${prefix}--`;
+                }
+                chargeTimeBar.style.width = `${soc}%`;
+                chargeTimeBar.style.background = "linear-gradient(90deg, #ffaf40, #ff9f1a)";
+            }
+        } else {
+            chargeTimeText.innerText = t("idle_time_text");
+            chargeTimeBar.style.width = `${soc}%`;
+            chargeTimeBar.style.background = "linear-gradient(90deg, #778ca3, #4b6584)";
+        }
+    }
+
     function applyLanguage(lang) {
         currentLang = lang;
         localStorage.setItem("luxpower_lang", lang);
@@ -879,6 +948,11 @@ document.addEventListener("DOMContentLoaded", () => {
         // Update language selector if it exists
         const langSelect = document.getElementById("ui_language");
         if (langSelect) langSelect.value = lang;
+
+        // Update predictions translations
+        if (lastInverterMetrics) {
+            updateChargeTimePrediction(lastInverterMetrics);
+        }
     }
 
     // ========== DOM Elements ==========
@@ -911,6 +985,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const valBatTemp = document.getElementById("valBatTemp");
     const valBatChgDay = document.getElementById("valBatChgDay");
     const valBatDischgDay = document.getElementById("valBatDischgDay");
+    const chargeTimeBar = document.getElementById("chargeTimeBar");
+    const chargeTimeText = document.getElementById("chargeTimeText");
     
     // Grid Metrics
     const valGridPower = document.getElementById("valGridPower");
@@ -1378,6 +1454,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (valBatTemp) valBatTemp.innerText = `${metrics.t_bat !== undefined ? metrics.t_bat : 0} °C`;
                 if (valBatChgDay) valBatChgDay.innerText = `${metrics.e_chg_day !== undefined ? metrics.e_chg_day.toFixed(1) : '0.0'} kWh`;
                 if (valBatDischgDay) valBatDischgDay.innerText = `${metrics.e_dischg_day !== undefined ? metrics.e_dischg_day.toFixed(1) : '0.0'} kWh`;
+
+                // Update predicted battery charge/discharge remaining time
+                lastInverterMetrics = metrics;
+                updateChargeTimePrediction(metrics);
 
                 // 4. Update Grid card
                 const p_to_user = metrics.p_to_user || 0;
