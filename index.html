@@ -18,7 +18,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/hinhnhu/style.css">
-  <script type="module" crossorigin src="/hinhnhu/assets/index-Y2ozMHwK.js"></script>
+  <script type="module" crossorigin src="/hinhnhu/assets/index-BKB9sLvD.js"></script>
 </head>
 <body>
     <!-- Glassmorphism decorative orbs -->
@@ -464,15 +464,31 @@
                         <h3 data-i18n="battery_title">Battery Status</h3>
                     </div>
                     <div class="card-body">
-                        <div class="radial-gauge-container">
-                            <div class="radial-gauge-wrapper">
-                                <canvas id="radialGauge"></canvas>
-                                <div class="radial-gauge-center">
-                                    <div class="radial-gauge-value" id="valSOC"><span data-counter="batterySoc">0</span>%</div>
-                                    <div class="radial-gauge-label" id="radialGaugeLabel">-- kWh</div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="radial-gauge-container" style="flex-direction: row; gap: 24px; justify-content: center; margin-bottom: 16px;">
+                             <!-- Gauge 1: Total Battery -->
+                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                 <div class="radial-gauge-wrapper">
+                                     <canvas id="radialGauge"></canvas>
+                                     <div class="radial-gauge-center">
+                                         <div class="radial-gauge-value" id="valSOC"><span data-counter="batterySoc">0</span>%</div>
+                                         <div class="radial-gauge-label" id="radialGaugeLabel">-- kWh</div>
+                                     </div>
+                                 </div>
+                                 <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); opacity: 0.8;" data-i18n="battery_total_label">Tổng</span>
+                             </div>
+                             
+                             <!-- Gauge 2: Usable Battery -->
+                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                 <div class="radial-gauge-wrapper">
+                                     <canvas id="usableRadialGauge"></canvas>
+                                     <div class="radial-gauge-center">
+                                         <div class="radial-gauge-value" id="valUsableSOC">--%</div>
+                                         <div class="radial-gauge-label" id="valUsableKwh">-- kWh</div>
+                                     </div>
+                                 </div>
+                                 <span style="font-size: 11px; font-weight: 600; color: #1dd1a1;" data-i18n="battery_usable_label">Có thể dùng</span>
+                             </div>
+                         </div>
                         <div class="soc-container">
                             <div class="progress-bar">
                                 <div class="progress-fill" id="socBar" style="width: 0%;"></div>

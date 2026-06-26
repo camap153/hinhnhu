@@ -287,62 +287,63 @@ class RadialGauge {
             gradient = ctx.createLinearGradient(0, 0, size, size);
             gradient.addColorStop(0, '#0891b2');
             gradient.addColorStop(0.5, '#22d3ee');
-            gradient.addColorStop(1, '#67e8f9');            } else if (isLight) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#059669');
-                gradient.addColorStop(0.5, '#10b981');
-                gradient.addColorStop(1, '#34d399');
-            } else if (document.body.classList.contains('theme-rosegold')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#b8860b');
-                gradient.addColorStop(0.5, '#d4a056');
-                gradient.addColorStop(1, '#f5d6a0');
-            } else if (document.body.classList.contains('theme-nature')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#047857');
-                gradient.addColorStop(0.5, '#34d399');
-                gradient.addColorStop(1, '#6ee7b7');
-            } else if (document.body.classList.contains('theme-glass')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#6366f1');
-                gradient.addColorStop(0.5, '#818cf8');
-                gradient.addColorStop(1, '#a5b4fc');
-            } else if (document.body.classList.contains('theme-synthwave')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#ff2d95');
-                gradient.addColorStop(0.5, '#ff6bc1');
-                gradient.addColorStop(1, '#00fff7');
-            } else if (document.body.classList.contains('theme-cyberpunk')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#ffd700');
-                gradient.addColorStop(0.5, '#ffab00');
-                gradient.addColorStop(1, '#00e5ff');
-            } else if (document.body.classList.contains('theme-ocean')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#0ea5e9');
-                gradient.addColorStop(0.5, '#2dd4bf');
-                gradient.addColorStop(1, '#5eead4');
-            } else if (document.body.classList.contains('theme-sunset')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#f59e0b');
-                gradient.addColorStop(0.5, '#ec4899');
-                gradient.addColorStop(1, '#8b5cf6');
-            } else if (document.body.classList.contains('theme-hacker')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#00aa00');
-                gradient.addColorStop(0.5, '#00ff41');
-                gradient.addColorStop(1, '#00e5ff');
-            } else if (document.body.classList.contains('theme-win10')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#0078d7');
-                gradient.addColorStop(0.5, '#4fc3f7');
-                gradient.addColorStop(1, '#8ab4f8');
-            } else if (document.body.classList.contains('theme-win11')) {
-                gradient = ctx.createLinearGradient(0, 0, size, size);
-                gradient.addColorStop(0, '#0078d4');
-                gradient.addColorStop(0.5, '#60cdff');
-                gradient.addColorStop(1, '#8ab4f8');
-            } else {
+            gradient.addColorStop(1, '#67e8f9');
+        } else if (isLight) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#059669');
+            gradient.addColorStop(0.5, '#10b981');
+            gradient.addColorStop(1, '#34d399');
+        } else if (document.body.classList.contains('theme-rosegold')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#b8860b');
+            gradient.addColorStop(0.5, '#d4a056');
+            gradient.addColorStop(1, '#f5d6a0');
+        } else if (document.body.classList.contains('theme-nature')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#047857');
+            gradient.addColorStop(0.5, '#34d399');
+            gradient.addColorStop(1, '#6ee7b7');
+        } else if (document.body.classList.contains('theme-glass')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#6366f1');
+            gradient.addColorStop(0.5, '#818cf8');
+            gradient.addColorStop(1, '#a5b4fc');
+        } else if (document.body.classList.contains('theme-synthwave')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#ff2d95');
+            gradient.addColorStop(0.5, '#ff6bc1');
+            gradient.addColorStop(1, '#00fff7');
+        } else if (document.body.classList.contains('theme-cyberpunk')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#ffd700');
+            gradient.addColorStop(0.5, '#ffab00');
+            gradient.addColorStop(1, '#00e5ff');
+        } else if (document.body.classList.contains('theme-ocean')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0ea5e9');
+            gradient.addColorStop(0.5, '#2dd4bf');
+            gradient.addColorStop(1, '#5eead4');
+        } else if (document.body.classList.contains('theme-sunset')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#f59e0b');
+            gradient.addColorStop(0.5, '#ec4899');
+            gradient.addColorStop(1, '#8b5cf6');
+        } else if (document.body.classList.contains('theme-hacker')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#00aa00');
+            gradient.addColorStop(0.5, '#00ff41');
+            gradient.addColorStop(1, '#00e5ff');
+        } else if (document.body.classList.contains('theme-win10')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0078d7');
+            gradient.addColorStop(0.5, '#4fc3f7');
+            gradient.addColorStop(1, '#8ab4f8');
+        } else if (document.body.classList.contains('theme-win11')) {
+            gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#0078d4');
+            gradient.addColorStop(0.5, '#60cdff');
+            gradient.addColorStop(1, '#8ab4f8');
+        } else {
             gradient = ctx.createLinearGradient(0, 0, size, size);
             gradient.addColorStop(0, '#10ac84');
             gradient.addColorStop(0.5, '#1dd1a1');
@@ -683,12 +684,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const sparklines = new SparklineManager();
     const counter = new AnimatedCounter();
     const radialGauge = new RadialGauge('radialGauge');
+    const usableRadialGauge = new RadialGauge('usableRadialGauge');
     
     // Expose to global scope
     window.__toast = toastSystem;
     window.__sparklines = sparklines;
     window.__counter = counter;
     window.__radialGauge = radialGauge;
+    window.__usableRadialGauge = usableRadialGauge;
     window.__particles = particles;
     // ========== INTERNATIONALIZATION (i18n) ==========
     const translations = {
@@ -714,6 +717,9 @@ document.addEventListener("DOMContentLoaded", () => {
             charge_time_prefix: "To Full: ",
             discharge_time_prefix: "Remaining: ",
             idle_time_text: "No charge/discharge",
+            usable_battery_label: "Usable Battery:",
+            battery_total_label: "Total",
+            battery_usable_label: "Usable",
             // Grid card
             grid_title: "Grid Connection",
             frequency: "Frequency:",
@@ -796,6 +802,9 @@ document.addEventListener("DOMContentLoaded", () => {
             charge_time_prefix: "Sạc đầy: ",
             discharge_time_prefix: "Còn dùng: ",
             idle_time_text: "Chế độ chờ",
+            usable_battery_label: "Pin có thể dùng:",
+            battery_total_label: "Tổng",
+            battery_usable_label: "Có thể dùng",
             // Grid card
             grid_title: "Kết nối lưới điện",
             frequency: "Tần số:",
@@ -924,10 +933,26 @@ document.addEventListener("DOMContentLoaded", () => {
         // Calculate remaining energy in kWh (SOC% of total capacity)
         const totalKwh = (capacity * v_bat) / 1000;
         const remainingKwh = totalKwh * (soc / 100);
+        const usableSoc = Math.max(0, soc - soc_cutoff);
+        const usableKwh = totalKwh * (usableSoc / 100) * efficiency;
         
         const radialGaugeLabel = document.getElementById('radialGaugeLabel') || document.querySelector('.radial-gauge-label');
         if (radialGaugeLabel) {
             radialGaugeLabel.innerText = `${remainingKwh.toFixed(1)} kWh`;
+        }
+
+        const valUsableSOC = document.getElementById('valUsableSOC');
+        if (valUsableSOC) {
+            valUsableSOC.innerText = `${usableSoc}%`;
+        }
+        
+        const valUsableKwh = document.getElementById('valUsableKwh');
+        if (valUsableKwh) {
+            valUsableKwh.innerText = `${usableKwh.toFixed(1)} kWh`;
+        }
+
+        if (window.__usableRadialGauge) {
+            window.__usableRadialGauge.setValue(usableSoc);
         }
 
         if (p_charge > 0) {
@@ -1476,8 +1501,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 if (socBar) socBar.style.width = `${soc}%`;
                 
-                // Update radial gauge
+                // Update radial gauges
                 if (radialGauge) radialGauge.setValue(soc);
+                if (usableRadialGauge) {
+                    const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
+                    const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 25;
+                    const usableSoc = Math.max(0, soc - soc_cutoff);
+                    usableRadialGauge.setValue(usableSoc);
+                }
 
                 const p_charge = metrics.p_charge || 0;
                 const p_discharge = metrics.p_discharge || 0;
