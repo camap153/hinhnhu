@@ -711,8 +711,8 @@ document.addEventListener("DOMContentLoaded", () => {
             bat_charging: "CHARGING",
             bat_discharging: "DISCHARGING",
             bat_idle: "IDLE",
-            charge_time_prefix: "Time to Full: ",
-            discharge_time_prefix: "Time to Empty: ",
+            charge_time_prefix: "To Full: ",
+            discharge_time_prefix: "Remaining: ",
             idle_time_text: "No charge/discharge",
             // Grid card
             grid_title: "Grid Connection",
@@ -793,8 +793,8 @@ document.addEventListener("DOMContentLoaded", () => {
             bat_charging: "ĐANG SẠC",
             bat_discharging: "ĐANG XẢ",
             bat_idle: "CHỜ",
-            charge_time_prefix: "Thời gian sạc đầy: ",
-            discharge_time_prefix: "Thời gian sử dụng: ",
+            charge_time_prefix: "Sạc đầy: ",
+            discharge_time_prefix: "Còn dùng: ",
             idle_time_text: "Chế độ chờ",
             // Grid card
             grid_title: "Kết nối lưới điện",
@@ -882,11 +882,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const h = totalHours % 24;
             const dayLabel = isVi ? "ngày" : (d === 1 ? "day" : "days");
             const hourLabel = isVi ? "giờ" : (h === 1 ? "hour" : "hours");
-            const minLabel = isVi ? "phút" : (m === 1 ? "min" : "mins");
             
-            let result = `${d} ${dayLabel} ${h} ${hourLabel}`;
-            if (m > 0) {
-                result += ` ${m} ${minLabel}`;
+            let result = `${d} ${dayLabel}`;
+            if (h > 0) {
+                result += ` ${h} ${hourLabel}`;
             }
             return result;
         } else if (totalHours > 0) {
