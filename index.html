@@ -6,10 +6,10 @@
     <meta name="theme-color" content="#0b0e14">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/svg+xml" href="/hinhnhu/icon.svg">
-    <link rel="apple-touch-icon" href="/hinhnhu/icon.svg">
-    <link rel="apple-touch-icon" sizes="180x180" href="/hinhnhu/icon.svg">
-    <link rel="apple-touch-icon" sizes="512x512" href="/hinhnhu/icon.svg">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="apple-touch-icon" href="/icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon.svg">
+    <link rel="apple-touch-icon" sizes="512x512" href="/icon.svg">
     <title>Luxpower Inverter Monitor</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,8 +17,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="/hinhnhu/style.css">
-  <script type="module" crossorigin src="/hinhnhu/assets/index-B3IR5wgM.js"></script>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <!-- Glassmorphism decorative orbs -->
@@ -609,6 +608,26 @@
                             <label for="inverter_serial" data-i18n="inverter_serial_label">Inverter Serial (10 chars)</label>
                             <input type="text" id="inverter_serial" name="inverter_serial" placeholder="e.g. 9876543210" maxlength="10" required>
                         </div>
+                        
+                        <!-- Battery settings for time estimation -->
+                        <div class="border-top-dashed" style="margin: 15px 0; padding-top: 15px;">
+                            <h4 style="margin-bottom: 12px; color: var(--color-primary, #10ac84); font-size: 15px;" data-i18n="battery_settings_title">Cấu hình Pin & Hiệu suất</h4>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="bat_capacity" data-i18n="battery_capacity_label">Dung lượng Pin (Ah)</label>
+                                    <input type="number" id="bat_capacity" name="bat_capacity" min="10" max="2000" placeholder="Ví dụ: 314" required>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="soc_cutoff" data-i18n="soc_cutoff_label">Ngưỡng ngắt xả (%)</label>
+                                    <input type="number" id="soc_cutoff" name="soc_cutoff" min="0" max="90" placeholder="Ví dụ: 25" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inverter_efficiency" data-i18n="inverter_efficiency_label">Hiệu suất biến tần (%)</label>
+                                <input type="number" id="inverter_efficiency" name="inverter_efficiency" min="50" max="100" placeholder="Ví dụ: 95" required>
+                            </div>
+                        </div>
+
                         <div class="form-group checkbox-group">
                             <input type="checkbox" id="force_simulation" name="force_simulation">
                             <label for="force_simulation" data-i18n="demo_mode_label">Enable Simulated Demo Mode</label>
@@ -624,6 +643,7 @@
     </div>
 
     <!-- Scripts -->
+    <script type="module" src="/src/main.js"></script>
 </body>
 </html>
 

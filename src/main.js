@@ -764,9 +764,10 @@ document.addEventListener("DOMContentLoaded", () => {
             dongle_ip_label: "Wi-Fi Dongle IP Address",
             port_label: "Port",
             poll_interval_label: "Poll Interval (s)",
-            dongle_serial_label: "Wi-Fi Dongle Serial (10 chars)",
-            inverter_serial_label: "Inverter Serial (10 chars)",
-            demo_mode_label: "Enable Simulated Demo Mode",
+            battery_settings_title: "Battery & Efficiency Config",
+            battery_capacity_label: "Battery Capacity (Ah)",
+            soc_cutoff_label: "Discharge Cutoff SOC (%)",
+            inverter_efficiency_label: "Inverter Efficiency (%)",
             cancel_btn: "Cancel",
             save_btn: "Save Settings"
         },
@@ -841,10 +842,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             theme_system: "Theo hệ thống",
             dongle_ip_label: "Địa chỉ IP Dongle Wi-Fi",
             port_label: "Cổng",
-            poll_interval_label: "Chu kỳ cập nhật (s)",
-            dongle_serial_label: "Serial Dongle Wi-Fi (10 ký tự)",
-            inverter_serial_label: "Serial Inverter (10 ký tự)",
-            demo_mode_label: "Bật chế độ Demo mô phỏng",
+            battery_settings_title: "Cấu hình Pin & Hiệu suất",
+            battery_capacity_label: "Dung lượng Pin (Ah)",
+            soc_cutoff_label: "Ngưỡng ngắt xả (%)",
+            inverter_efficiency_label: "Hiệu suất biến tần (%)",
             cancel_btn: "Hủy",
             save_btn: "Lưu cài đặt"
         }
@@ -900,10 +901,19 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!chargeTimeBar || !chargeTimeText || !metrics) return;
         
         const soc = metrics.soc !== undefined ? metrics.soc : 0;
-        const capacity = metrics.bat_capacity || 100; // Ah
         const v_bat = metrics.v_bat || 51.2; // V
         const p_charge = metrics.p_charge || 0;
         const p_discharge = metrics.p_discharge || 0;
+
+        // Retrieve config preferences from localStorage with defaults
+        const savedCapacity = parseInt(localStorage.getItem("luxpower_bat_capacity"));
+        const capacity = (!isNaN(savedCapacity) && savedCapacity > 0) ? savedCapacity : (metrics.bat_capacity || 314);
+        
+        const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
+        const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 25;
+        
+        const savedEfficiency = parseFloat(localStorage.getItem("luxpower_inverter_efficiency"));
+        const efficiency = (!isNaN(savedEfficiency) && savedEfficiency > 0) ? savedEfficiency : 0.95;
 
         if (p_charge > 0) {
             const remainingSoc = 100 - soc;
@@ -927,12 +937,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 chargeTimeBar.style.background = "linear-gradient(90deg, #0be881, #05c46b)";
             }
         } else if (p_discharge > 0) {
-            const remainingSoc = soc;
-            if (remainingSoc <= 0) {
-                chargeTimeText.innerText = currentLang === "vi" ? "Hết pin" : "Battery Empty";
+            const deltaSoc = soc - soc_cutoff;
+            if (deltaSoc <= 0) {
+                chargeTimeText.innerText = currentLang === "vi" ? "Hết pin (Chạm ngưỡng ngắt)" : "Battery Empty (Cutoff Reached)";
                 chargeTimeBar.style.width = "0%";
+                chargeTimeBar.style.background = "linear-gradient(90deg, #ff3f34, #ea2027)";
             } else {
-                const remainingWh = (capacity * v_bat) * (remainingSoc / 100);
+                const remainingWh = (capacity * v_bat) * (deltaSoc / 100) * efficiency;
                 const hours = remainingWh / p_discharge;
                 if (isFinite(hours) && hours > 0) {
                     const totalMinutes = Math.round(hours * 60);
@@ -943,7 +954,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const prefix = t("discharge_time_prefix");
                     chargeTimeText.innerText = `${prefix}--`;
                 }
-                chargeTimeBar.style.width = `${soc}%`;
+                // Usable percent of the remaining range
+                const usablePercent = Math.max(0, Math.min(100, Math.round((deltaSoc / (100 - soc_cutoff)) * 100)));
+                chargeTimeBar.style.width = `${usablePercent}%`;
                 chargeTimeBar.style.background = "linear-gradient(90deg, #ffaf40, #ff9f1a)";
             }
         } else {
@@ -952,6 +965,7 @@ document.addEventListener("DOMContentLoaded", () => {
             chargeTimeBar.style.background = "linear-gradient(90deg, #778ca3, #4b6584)";
         }
     }
+
 
     function applyLanguage(lang) {
         currentLang = lang;
@@ -1696,6 +1710,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ========== Modal Control logic ==========
     function openModal() {
         document.getElementById("ui_language").value = currentLang;
+        document.getElementById("bat_capacity").value = localStorage.getItem("luxpower_bat_capacity") || 314;
+        document.getElementById("soc_cutoff").value = localStorage.getItem("luxpower_soc_cutoff") || 25;
+        document.getElementById("inverter_efficiency").value = Math.round((parseFloat(localStorage.getItem("luxpower_inverter_efficiency")) || 0.95) * 100);
         settingsModal.classList.remove("hidden");
     }
 
@@ -1719,6 +1736,17 @@ document.addEventListener("DOMContentLoaded", () => {
     settingsForm.addEventListener("submit", (e) => {
         e.preventDefault();
         
+        const settings = {
+            bat_capacity: parseInt(document.getElementById("bat_capacity").value, 10) || 314,
+            soc_cutoff: parseInt(document.getElementById("soc_cutoff").value, 10) || 25,
+            inverter_efficiency: (parseInt(document.getElementById("inverter_efficiency").value, 10) || 95) / 100
+        };
+
+        // Save locally first
+        localStorage.setItem("luxpower_bat_capacity", settings.bat_capacity);
+        localStorage.setItem("luxpower_soc_cutoff", settings.soc_cutoff);
+        localStorage.setItem("luxpower_inverter_efficiency", settings.inverter_efficiency);
+
         // Save language preference (stored in localStorage, not server config)
         const selectedLang = document.getElementById("ui_language").value;
         applyLanguage(selectedLang);
