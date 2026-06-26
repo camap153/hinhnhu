@@ -936,6 +936,11 @@ document.addEventListener("DOMContentLoaded", () => {
         const usableSoc = Math.max(0, soc - soc_cutoff);
         const usableKwh = totalKwh * (usableSoc / 100) * efficiency;
         
+        const batteryTitleValues = document.getElementById("batteryTitleValues");
+        if (batteryTitleValues) {
+            batteryTitleValues.innerText = ` : ${soc}% ${remainingKwh.toFixed(1)} kWh`;
+        }
+        
         const radialGaugeLabel = document.getElementById('radialGaugeLabel') || document.querySelector('.radial-gauge-label');
         if (radialGaugeLabel) {
             radialGaugeLabel.innerText = `${remainingKwh.toFixed(1)} kWh`;

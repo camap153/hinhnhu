@@ -18,7 +18,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/hinhnhu/style.css">
-  <script type="module" crossorigin src="/hinhnhu/assets/index-BKB9sLvD.js"></script>
+  <script type="module" crossorigin src="/hinhnhu/assets/index-u-09T54G.js"></script>
 </head>
 <body>
     <!-- Glassmorphism decorative orbs -->
@@ -245,201 +245,7 @@
         <!-- Main Content Grid -->
         <main class="dashboard-content" id="dashboardView">
             <section class="summary-grid">
-                <!-- CARD 1: SOLAR PV -->
-                <div class="summary-card solar-card skeleton-container">
-                    <!-- Skeleton overlay -->
-                    <div class="skeleton-overlay" data-skeleton="solar">
-                        <div class="skeleton-card">
-                            <div class="skeleton-header">
-                                <div class="skeleton-circle"></div>
-                                <div class="skeleton-placeholder" style="width: 50%;"></div>
-                            </div>
-                            <div class="skeleton-pulse"></div>
-                            <div class="skeleton-placeholder" style="width: 40%;"></div>
-                            <div class="skeleton-line" style="width: 70%;"></div>
-                            <div class="skeleton-line" style="width: 55%;"></div>
-                            <div class="skeleton-line" style="width: 45%;"></div>
-                        </div>
-                    </div>
-                    <div class="card-header">
-                        <div class="icon-wrapper">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="5"></circle>
-                                <line x1="12" y1="1" x2="12" y2="3"></line>
-                                <line x1="12" y1="21" x2="12" y2="23"></line>
-                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                <line x1="1" y1="12" x2="3" y2="12"></line>
-                                <line x1="21" y1="12" x2="23" y2="12"></line>
-                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                            </svg>
-                        </div>
-                        <h3 data-i18n="solar_title">Solar Production</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="main-metric">
-                            <span class="value-large" id="valSolarPower"><span data-counter="solarPower">0</span></span> <span class="unit">W</span>
-                        </div>
-                        <div class="sub-metric">
-                            <span data-i18n="todays_energy">Today's Energy:</span> <span id="valSolarEnergy"><span data-counter="solarEnergy">0.0</span> kWh</span>
-                        </div>
-                        <div class="sparkline-wrapper" data-sparkline="solar" data-color="#ff9f43" data-fill="rgba(255, 159, 67, 0.08)"></div>
-                        <div class="detail-list pv-details">
-                            <div class="detail-item">
-                                <span class="label">PV1:</span>
-                                <span class="val" id="valPV1">0 W / 0 V</span>
-                            </div>
-                            <div class="detail-item">
-                                <span class="label">PV2:</span>
-                                <span class="val" id="valPV2">0 W / 0 V</span>
-                            </div>
-                        </div>
-                        <div class="border-top-dashed" style="margin-top: 12px;">
-                            <div class="detail-item justify-between">
-                                <span class="label" data-i18n="home_usage">🏠 Home Usage:</span>
-                                <span class="val" id="valHomeUsageW" style="color: #9c88ff; font-size: 16px; font-weight: 700;"><span data-counter="homeUsage">0</span> W</span>
-                            </div>
-                            <div class="detail-item justify-between">
-                                <span class="label" data-i18n="consumption_today">Today Consumption:</span>
-                                <span class="val" id="valHomeConsumDay" style="color: #9c88ff;">0.0 kWh</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 2: HOME LOAD -->
-                <div class="summary-card load-card skeleton-container">
-                    <!-- Skeleton overlay -->
-                    <div class="skeleton-overlay" data-skeleton="load">
-                        <div class="skeleton-card">
-                            <div class="skeleton-header">
-                                <div class="skeleton-circle"></div>
-                                <div class="skeleton-placeholder" style="width: 50%;"></div>
-                            </div>
-                            <div class="skeleton-pulse"></div>
-                            <div class="skeleton-line" style="width: 70%;"></div>
-                            <div class="skeleton-line" style="width: 55%;"></div>
-                            <div class="skeleton-line" style="width: 60%;"></div>
-                        </div>
-                    </div>
-                    <div class="card-header">
-                        <div class="icon-wrapper">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                            </svg>
-                        </div>
-                        <h3 data-i18n="homeload_title">Home Load</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="main-metric">
-                            <span class="value-large" id="valLoadPower"><span data-counter="loadPower">0</span></span> <span class="unit">W</span>
-                        </div>
-                        <div class="sparkline-wrapper" data-sparkline="load" data-color="#9c88ff" data-fill="rgba(156, 136, 255, 0.08)"></div>
-                        <div class="detail-list">
-                            <div class="detail-row">
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="apparent_power">Apparent Power:</span>
-                                    <span class="val" id="valLoadVA">0 VA</span>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="load_voltage">Load Voltage:</span>
-                                    <span class="val" id="valLoadVolt">0 V</span>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="inverter_temp">Inverter Temp:</span>
-                                    <span class="val" id="valInvTemp">0 °C</span>
-                                </div>
-                            </div>
-                            <div class="border-top-dashed">
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="today_home_consumption">Today Home Consumption:</span>
-                                    <span class="val" id="valLoadEnergy">0.0 kWh</span>
-                                </div>
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="today_grid_import">Today Grid Import:</span>
-                                    <span class="val" id="valHomeGridImport">0.0 kWh</span>
-                                </div>
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="today_eps_consumption">Today EPS Consumption:</span>
-                                    <span class="val" id="valEPSEnergy">0.0 kWh</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 3: GRID CONNECTION -->
-                <div class="summary-card grid-card skeleton-container">
-                    <!-- Skeleton overlay -->
-                    <div class="skeleton-overlay" data-skeleton="grid">
-                        <div class="skeleton-card">
-                            <div class="skeleton-header">
-                                <div class="skeleton-circle"></div>
-                                <div class="skeleton-placeholder" style="width: 50%;"></div>
-                            </div>
-                            <div class="skeleton-pulse"></div>
-                            <div class="skeleton-line" style="width: 70%;"></div>
-                            <div class="skeleton-line" style="width: 55%;"></div>
-                            <div class="skeleton-line" style="width: 65%;"></div>
-                            <div class="skeleton-line" style="width: 45%;"></div>
-                        </div>
-                    </div>
-                    <div class="card-header">
-                        <div class="icon-wrapper">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2L4 22h16L12 2zm-4 15h8M7 11h10M12 2v20M5 22l7-10 7 10"></path>
-                            </svg>
-                        </div>
-                        <h3 data-i18n="grid_title">Grid Connection</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="main-metric flex-row">
-                            <div>
-                                <span class="value-large" id="valGridPower"><span data-counter="gridPower">0</span></span> <span class="unit">W</span>
-                            </div>
-                            <span class="status-badge-pill warning" id="valGridStatus">IMPORTING</span>
-                        </div>
-                        <div class="sparkline-wrapper" data-sparkline="grid" data-color="#54a0ff" data-fill="rgba(84, 160, 255, 0.08)"></div>
-                        <div class="detail-list">
-                            <div class="detail-row">
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="voltage">Voltage:</span>
-                                    <span class="val" id="valGridVolt">0 V</span>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="frequency">Frequency:</span>
-                                    <span class="val" id="valGridFreq">0 Hz</span>
-                                </div>
-                                <div class="detail-col">
-                                    <span class="label" data-i18n="power_factor">Power Factor:</span>
-                                    <span class="val" id="valGridPF">0.000</span>
-                                </div>
-                            </div>
-                            <div class="border-top-dashed">
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="today_imported">Today Imported:</span>
-                                    <span class="val" id="valGridImpDay">0.0 kWh</span>
-                                </div>
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="today_exported">Today Exported:</span>
-                                    <span class="val" id="valGridExpDay">0.0 kWh</span>
-                                </div>
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="total_import">Total Import:</span>
-                                    <span class="val" id="valGridImpAll">0.0 kWh</span>
-                                </div>
-                                <div class="detail-item justify-between">
-                                    <span class="label" data-i18n="total_export">Total Export:</span>
-                                    <span class="val" id="valGridExpAll">0.0 kWh</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CARD 4: BATTERY STATUS -->
+                <!-- CARD 1: BATTERY STATUS -->
                 <div class="summary-card battery-card skeleton-container">
                     <!-- Skeleton overlay -->
                     <div class="skeleton-overlay" data-skeleton="battery">
@@ -461,7 +267,7 @@
                                 <line x1="22" y1="11" x2="22" y2="13"></line>
                             </svg>
                         </div>
-                        <h3 data-i18n="battery_title">Battery Status</h3>
+                        <h3><span data-i18n="battery_title">Battery Status</span><span id="batteryTitleValues"></span></h3>
                     </div>
                     <div class="card-body">
                         <div class="radial-gauge-container" style="flex-direction: row; gap: 24px; justify-content: center; margin-bottom: 16px;">
@@ -531,6 +337,200 @@
                                 <div class="detail-item justify-between">
                                     <span class="label" data-i18n="today_discharged">Today Discharged:</span>
                                     <span class="val" id="valBatDischgDay">0.0 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: SOLAR PV -->
+                <div class="summary-card solar-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="solar">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-placeholder" style="width: 40%;"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="solar_title">Solar Production</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric">
+                            <span class="value-large" id="valSolarPower"><span data-counter="solarPower">0</span></span> <span class="unit">W</span>
+                        </div>
+                        <div class="sub-metric">
+                            <span data-i18n="todays_energy">Today's Energy:</span> <span id="valSolarEnergy"><span data-counter="solarEnergy">0.0</span> kWh</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="solar" data-color="#ff9f43" data-fill="rgba(255, 159, 67, 0.08)"></div>
+                        <div class="detail-list pv-details">
+                            <div class="detail-item">
+                                <span class="label">PV1:</span>
+                                <span class="val" id="valPV1">0 W / 0 V</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">PV2:</span>
+                                <span class="val" id="valPV2">0 W / 0 V</span>
+                            </div>
+                        </div>
+                        <div class="border-top-dashed" style="margin-top: 12px;">
+                            <div class="detail-item justify-between">
+                                <span class="label" data-i18n="home_usage">🏠 Home Usage:</span>
+                                <span class="val" id="valHomeUsageW" style="color: #9c88ff; font-size: 16px; font-weight: 700;"><span data-counter="homeUsage">0</span> W</span>
+                            </div>
+                            <div class="detail-item justify-between">
+                                <span class="label" data-i18n="consumption_today">Today Consumption:</span>
+                                <span class="val" id="valHomeConsumDay" style="color: #9c88ff;">0.0 kWh</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: HOME LOAD -->
+                <div class="summary-card load-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="load">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="homeload_title">Home Load</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric">
+                            <span class="value-large" id="valLoadPower"><span data-counter="loadPower">0</span></span> <span class="unit">W</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="load" data-color="#9c88ff" data-fill="rgba(156, 136, 255, 0.08)"></div>
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="apparent_power">Apparent Power:</span>
+                                    <span class="val" id="valLoadVA">0 VA</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="load_voltage">Load Voltage:</span>
+                                    <span class="val" id="valLoadVolt">0 V</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="inverter_temp">Inverter Temp:</span>
+                                    <span class="val" id="valInvTemp">0 °C</span>
+                                </div>
+                            </div>
+                            <div class="border-top-dashed">
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_home_consumption">Today Home Consumption:</span>
+                                    <span class="val" id="valLoadEnergy">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_grid_import">Today Grid Import:</span>
+                                    <span class="val" id="valHomeGridImport">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_eps_consumption">Today EPS Consumption:</span>
+                                    <span class="val" id="valEPSEnergy">0.0 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: GRID CONNECTION -->
+                <div class="summary-card grid-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="grid">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 65%;"></div>
+                            <div class="skeleton-line" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L4 22h16L12 2zm-4 15h8M7 11h10M12 2v20M5 22l7-10 7 10"></path>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="grid_title">Grid Connection</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric flex-row">
+                            <div>
+                                <span class="value-large" id="valGridPower"><span data-counter="gridPower">0</span></span> <span class="unit">W</span>
+                            </div>
+                            <span class="status-badge-pill warning" id="valGridStatus">IMPORTING</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="grid" data-color="#54a0ff" data-fill="rgba(84, 160, 255, 0.08)"></div>
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="voltage">Voltage:</span>
+                                    <span class="val" id="valGridVolt">0 V</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="frequency">Frequency:</span>
+                                    <span class="val" id="valGridFreq">0 Hz</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="power_factor">Power Factor:</span>
+                                    <span class="val" id="valGridPF">0.000</span>
+                                </div>
+                            </div>
+                            <div class="border-top-dashed">
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_imported">Today Imported:</span>
+                                    <span class="val" id="valGridImpDay">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_exported">Today Exported:</span>
+                                    <span class="val" id="valGridExpDay">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="total_import">Total Import:</span>
+                                    <span class="val" id="valGridImpAll">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="total_export">Total Export:</span>
+                                    <span class="val" id="valGridExpAll">0.0 kWh</span>
                                 </div>
                             </div>
                         </div>
