@@ -5280,6 +5280,17 @@ body.theme-cyber .insight-item:hover {
     font-weight: 800;
     color: var(--text-primary);
     line-height: 1;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.percent-sign {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: 1px;
 }
 
 .radial-gauge-label {

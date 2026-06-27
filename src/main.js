@@ -1023,7 +1023,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const valUsableSOC = document.getElementById('valUsableSOC');
         if (valUsableSOC) {
-            valUsableSOC.innerText = `${usableSoc}%`;
+            valUsableSOC.innerHTML = `${usableSoc}<span class="percent-sign">%</span>`;
         }
         
         const valUsableKwh = document.getElementById('valUsableKwh');
