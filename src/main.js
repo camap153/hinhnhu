@@ -750,6 +750,12 @@ function initButtonRipple() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Migrate default soc_cutoff from 25 to 20
+    const currentCutoff = localStorage.getItem("luxpower_soc_cutoff");
+    if (currentCutoff === null || currentCutoff === "25") {
+        localStorage.setItem("luxpower_soc_cutoff", "20");
+    }
+
     // ========== INIT LUXURY FEATURES ==========
     const particles = new ParticleSystem('particleCanvas');
     const toastSystem = new ToastSystem();
@@ -998,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const capacity = (!isNaN(savedCapacity) && savedCapacity > 0) ? savedCapacity : 314;
         
         const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
-        const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 25;
+        const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 20;
         
         const savedEfficiency = parseFloat(localStorage.getItem("luxpower_inverter_efficiency"));
         const efficiency = (!isNaN(savedEfficiency) && savedEfficiency > 0) ? savedEfficiency : 0.95;
@@ -1579,7 +1585,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (radialGauge) radialGauge.setValue(soc);
                 if (usableRadialGauge) {
                     const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
-                    const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 25;
+                    const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 20;
                     const usableSoc = Math.max(0, soc - soc_cutoff);
                     usableRadialGauge.setValue(usableSoc);
                 }
@@ -1829,11 +1835,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ========== Modal Control logic ==========
     function openModal() {
-        document.getElementById("ui_language").value = currentLang;
-        document.getElementById("bat_capacity").value = localStorage.getItem("luxpower_bat_capacity") || 314;
-        document.getElementById("soc_cutoff").value = localStorage.getItem("luxpower_soc_cutoff") || 25;
-        document.getElementById("inverter_efficiency").value = Math.round((parseFloat(localStorage.getItem("luxpower_inverter_efficiency")) || 0.95) * 100);
-        settingsModal.classList.remove("hidden");
+        fetch("/api/settings")
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("inverter_ip").value = data.inverter_ip || "";
+                document.getElementById("inverter_port").value = data.inverter_port || 8000;
+                document.getElementById("poll_interval").value = data.poll_interval || 5;
+                document.getElementById("dongle_serial").value = data.dongle_serial || "";
+                document.getElementById("inverter_serial").value = data.inverter_serial || "";
+                document.getElementById("force_simulation").checked = !!data.force_simulation;
+                document.getElementById("ui_language").value = currentLang;
+                
+                // Populate battery settings from API or localStorage
+                document.getElementById("bat_capacity").value = localStorage.getItem("luxpower_bat_capacity") || data.bat_capacity || 314;
+                document.getElementById("soc_cutoff").value = localStorage.getItem("luxpower_soc_cutoff") || data.soc_cutoff || 20;
+                
+                const currentEff = parseFloat(localStorage.getItem("luxpower_inverter_efficiency")) || data.inverter_efficiency || 0.95;
+                document.getElementById("inverter_efficiency").value = Math.round(currentEff * 100);
+                
+                settingsModal.classList.remove("hidden");
+            })
+            .catch(err => {
+                console.error("Failed to load current settings: ", err);
+            });
     }
 
     function closeModal() {
@@ -1857,8 +1881,14 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         
         const settings = {
+            inverter_ip: document.getElementById("inverter_ip").value,
+            inverter_port: parseInt(document.getElementById("inverter_port").value, 10),
+            poll_interval: parseInt(document.getElementById("poll_interval").value, 10),
+            dongle_serial: document.getElementById("dongle_serial").value,
+            inverter_serial: document.getElementById("inverter_serial").value,
+            force_simulation: document.getElementById("force_simulation").checked,
             bat_capacity: parseInt(document.getElementById("bat_capacity").value, 10) || 314,
-            soc_cutoff: parseInt(document.getElementById("soc_cutoff").value, 10) || 25,
+            soc_cutoff: parseInt(document.getElementById("soc_cutoff").value, 10) || 20,
             inverter_efficiency: (parseInt(document.getElementById("inverter_efficiency").value, 10) || 95) / 100
         };
 
@@ -1870,9 +1900,31 @@ document.addEventListener("DOMContentLoaded", () => {
         // Save language preference (stored in localStorage, not server config)
         const selectedLang = document.getElementById("ui_language").value;
         applyLanguage(selectedLang);
-        
-        closeModal();
-        alert("Settings saved locally! Note: hardware config changes require updating config.json manually.");
+
+        fetch("/api/settings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(settings)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === "success") {
+                closeModal();
+                // Immediately trigger poller update with the new settings
+                pollInverterData();
+                
+                // Re-align the polling interval
+                clearInterval(pollTimer);
+                pollTimer = setInterval(pollInverterData, settings.poll_interval * 1000);
+            } else {
+                alert("Failed to save settings: " + data.message);
+            }
+        })
+        .catch(err => {
+            alert("Error sending settings: " + err);
+        });
     });
 
     // ========== Initialize ==========
