@@ -1013,6 +1013,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const totalKwh = (capacity * v_bat) / 1000;
         const remainingKwh = totalKwh * (soc / 100);
         const usableSoc = Math.max(0, soc - soc_cutoff);
+        const usableRange = Math.max(1, 100 - soc_cutoff);
+        const usableSocPct = Math.max(0, Math.min(100, (usableSoc / usableRange) * 100));
         const usableKwh = totalKwh * (usableSoc / 100) * efficiency;
         
 
@@ -1023,7 +1025,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const valUsableSOC = document.getElementById('valUsableSOC');
         if (valUsableSOC) {
-            valUsableSOC.innerHTML = `${usableSoc}<span class="percent-sign">%</span>`;
+            valUsableSOC.innerHTML = `${Math.round(usableSocPct)}<span class="percent-sign">%</span>`;
         }
         
         const valUsableKwh = document.getElementById('valUsableKwh');
@@ -1032,7 +1034,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (window.__usableRadialGauge) {
-            window.__usableRadialGauge.setValue(usableSoc);
+            window.__usableRadialGauge.setValue(usableSocPct);
         }
 
         if (p_charge > 0) {
@@ -1586,8 +1588,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (usableRadialGauge) {
                     const savedCutoff = parseInt(localStorage.getItem("luxpower_soc_cutoff"));
                     const soc_cutoff = (!isNaN(savedCutoff) && savedCutoff >= 0) ? savedCutoff : 20;
-                    const usableSoc = Math.max(0, soc - soc_cutoff);
-                    usableRadialGauge.setValue(usableSoc);
+                    const usableSocRaw = Math.max(0, soc - soc_cutoff);
+                    const usableRange = Math.max(1, 100 - soc_cutoff);
+                    const usableSocPct = Math.max(0, Math.min(100, (usableSocRaw / usableRange) * 100));
+                    usableRadialGauge.setValue(usableSocPct);
                 }
 
                 const p_charge = metrics.p_charge || 0;

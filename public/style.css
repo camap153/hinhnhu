@@ -4799,8 +4799,11 @@ body.theme-win11 .progress-fill {
     border-radius: 20px;
     width: 90%;
     max-width: 450px;
+    max-height: 90vh;
     box-shadow: var(--card-shadow);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
     transform: scale(1);
     transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -4815,6 +4818,7 @@ body.theme-win11 .progress-fill {
     align-items: center;
     padding: 20px 24px;
     border-bottom: 1px solid var(--border-card);
+    flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -4848,6 +4852,9 @@ body.theme-win11 .progress-fill {
 
 .modal-body {
     padding: 24px;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .form-group {
@@ -5280,6 +5287,17 @@ body.theme-cyber .insight-item:hover {
     font-weight: 800;
     color: var(--text-primary);
     line-height: 1;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: baseline;
+    justify-content: center;
+}
+
+.percent-sign {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-left: 1px;
 }
 
 .radial-gauge-label {
