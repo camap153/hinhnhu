@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAET4HYHSff1xENxe74UZuuGnc4k0JLF58",
@@ -1522,7 +1522,19 @@ document.addEventListener("DOMContentLoaded", () => {
         // Now handled by Firebase realtime listener below
     }
 
-    onValue(systemRef, (snapshot) => {
+    // ========== VISITOR HEARTBEAT (adaptive polling signal) ==========
+// Khi có người xem qua GitHub Pages, ghi heartbeat lên Firebase
+// để backend app.py biết mà poll nhanh thay vì 10 phút/lần
+const heartbeatRef = ref(database, 'visitor_heartbeat');
+function sendHeartbeat() {
+    set(heartbeatRef, { timestamp: Date.now() })
+        .catch(err => console.warn("Heartbeat write failed:", err));
+}
+// Gửi ngay khi load trang, và lặp lại mỗi 30 giây
+sendHeartbeat();
+setInterval(sendHeartbeat, 30000);
+
+onValue(systemRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
                 const status = data.status || "Offline";
