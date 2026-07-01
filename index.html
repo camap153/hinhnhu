@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0e14">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/svg+xml" href="/hinhnhu/icon.svg">
+    <link rel="apple-touch-icon" href="/hinhnhu/icon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/hinhnhu/icon.svg">
+    <link rel="apple-touch-icon" sizes="512x512" href="/hinhnhu/icon.svg">
+    <title>Luxpower Inverter Monitor</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/hinhnhu/style.css">
+  <script type="module" crossorigin src="/hinhnhu/assets/index-C4a-vKdQ.js"></script>
+</head>
+<body>
+    <!-- Glassmorphism decorative orbs -->
+    <div id="glassOrb1"></div>
+    <div id="glassOrb2"></div>
+    <div id="glassOrb3"></div>
+    
+    <!-- Particle Background -->
+    <canvas id="particleCanvas"></canvas>
+    
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+    
+    <!-- Full-page Skeleton Loader -->
+    <div id="pageLoader">
+        <svg class="loader-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+        </svg>
+        <div class="loader-bar">
+            <div class="loader-bar-fill"></div>
+        </div>
+    </div>
+    
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                </svg>
+                <div class="logo-text">
+                    <h1>LUXPOWER</h1>
+                    <span data-i18n="header_subtitle">Local Inverter Monitor</span>
+                </div>
+            </div>
+            
+            <div class="header-controls">
+                <div class="status-badge" id="statusBadge">
+                    <span class="status-dot"></span>
+                    <span class="status-text" id="statusText">Connecting...</span>
+                </div>
+                <div class="simulated-badge hidden" id="simulatedBadge">DEMO</div>
+                <div class="time-stamp" id="updateTime">Last updated: --:--:--</div>
+                <button class="settings-btn theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme" title="Switch to Light Theme">
+                    <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="theme-icon-moon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg class="theme-icon-cyber hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                        <rect x="7" y="7" width="3" height="3" rx="0.5"></rect>
+                        <rect x="14" y="7" width="3" height="3" rx="0.5"></rect>
+                        <rect x="7" y="14" width="3" height="3" rx="0.5"></rect>
+                        <rect x="14" y="14" width="3" height="3" rx="0.5"></rect>
+                        <line x1="10" y1="8.5" x2="14" y2="8.5"></line>
+                        <line x1="10" y1="15.5" x2="14" y2="15.5"></line>
+                        <line x1="8.5" y1="10" x2="8.5" y2="14"></line>
+                        <line x1="15.5" y1="10" x2="15.5" y2="14"></line>
+                    </svg>
+                    <svg class="theme-icon-rosegold hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <path d="M12 2L15 9l7 1-5.3 5.1L18 23l-6-3.2L6 23l1.3-7.9L2 10l7-1z"></path>
+                    </svg>
+                    <svg class="theme-icon-nature hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <path d="M12 2L3 12h4v6h10v-6h4L12 2z"></path>
+                        <path d="M12 12v10"></path>
+                    </svg>
+                    <svg class="theme-icon-glass hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <path d="M8 21h8"></path>
+                        <path d="M12 16v5"></path>
+                        <path d="M6 3h12l-1.5 9H7.5L6 3z"></path>
+                        <circle cx="12" cy="9" r="2" fill="currentColor" opacity="0.4"></circle>
+                    </svg>
+                    <svg class="theme-icon-synthwave hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <circle cx="12" cy="12" r="4"></circle>
+                        <path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8"></path>
+                        <path d="M2 22c0-5.523 4.477-10 10-10s10 4.477 10 10"></path>
+                        <line x1="12" y1="2" x2="12" y2="8"></line>
+                        <line x1="12" y1="12" x2="12" y2="14"></line>
+                    </svg>
+                    <svg class="theme-icon-cyberpunk hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2v20M2 12h20"></path>
+                        <path d="M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"></path>
+                        <circle cx="12" cy="12" r="3" fill="currentColor" opacity="0.4"></circle>
+                    </svg>
+                    <svg class="theme-icon-ocean hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <path d="M2 12c2-2 6-4 10-4s8 2 10 4"></path>
+                        <path d="M2 17c2-2 6-4 10-4s8 2 10 4"></path>
+                        <path d="M2 7c2-2 6-4 10-4s8 2 10 4"></path>
+                        <circle cx="12" cy="5" r="2.5" fill="currentColor" opacity="0.4"></circle>
+                    </svg>
+                    <svg class="theme-icon-sunset hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <circle cx="12" cy="10" r="4" fill="currentColor" opacity="0.4"></circle>
+                        <path d="M12 2v2M12 18v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 10h2M20 10h2M4.93 15.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+                        <path d="M4 20h16"></path>
+                        <path d="M6 17h4l2-2 2 2h4"></path>
+                    </svg>
+                    <svg class="theme-icon-hacker hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <polyline points="4 17 10 11 4 5"></polyline>
+                        <line x1="12" y1="19" x2="20" y2="19"></line>
+                        <line x1="20" y1="19" x2="20" y2="19"></line>
+                        <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                    </svg>
+                    <svg class="theme-icon-win11 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <rect x="3" y="3" width="8" height="8" rx="1"></rect>
+                        <rect x="13" y="3" width="8" height="8" rx="1"></rect>
+                        <rect x="3" y="13" width="8" height="8" rx="1"></rect>
+                        <rect x="13" y="13" width="8" height="8" rx="1"></rect>
+                    </svg>
+                    <svg class="theme-icon-win10 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+                        <rect x="2" y="2" width="9" height="9" rx="0.5"></rect>
+                        <rect x="13" y="2" width="9" height="9" rx="0.5"></rect>
+                        <rect x="2" y="13" width="9" height="9" rx="0.5"></rect>
+                        <rect x="13" y="13" width="9" height="9" rx="0.5"></rect>
+                    </svg>
+                </button>
+                <button class="settings-btn" id="toggleChartBtn" aria-label="Toggle Chart" title="Hiện/Ẩn biểu đồ">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </button>
+                <button class="settings-btn" id="openSettingsBtn" aria-label="Open Settings">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+
+
+        <!-- Daily Insights Banner -->
+        <div class="insights-banner skeleton-container">
+            <!-- Skeleton overlay -->
+            <div class="skeleton-overlay" data-skeleton="insights">
+                <div style="display: flex; gap: 12px; padding: 12px 20px;">
+                    <div class="skeleton-insight">
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-placeholder" style="width: 80px;"></div>
+                    </div>
+                    <div class="skeleton-insight">
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-placeholder" style="width: 80px;"></div>
+                    </div>
+                    <div class="skeleton-insight">
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-placeholder" style="width: 80px;"></div>
+                    </div>
+                    <div class="skeleton-insight">
+                        <div class="skeleton-circle"></div>
+                        <div class="skeleton-placeholder" style="width: 80px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="insight-item">
+                <div class="insight-icon solar-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+                <div class="insight-content">
+                    <span class="insight-label" data-i18n="solar_title">Solar PV</span>
+                    <span class="insight-value" id="insightSolar">0 W</span>
+                </div>
+            </div>
+            <div class="insight-item">
+                <div class="insight-icon battery-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect>
+                        <line x1="22" y1="11" x2="22" y2="13"></line>
+                    </svg>
+                </div>
+                <div class="insight-content">
+                    <span class="insight-label" data-i18n="battery_title">Battery</span>
+                    <span class="insight-value" id="insightBattery">0%</span>
+                </div>
+            </div>
+            <div class="insight-item">
+                <div class="insight-icon grid-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L4 22h16L12 2zm-4 15h8M7 11h10M12 2v20M5 22l7-10 7 10"></path>
+                    </svg>
+                </div>
+                <div class="insight-content">
+                    <span class="insight-label" data-i18n="grid_title">Grid</span>
+                    <span class="insight-value" id="insightGrid">0 W</span>
+                </div>
+            </div>
+            <div class="insight-item">
+                <div class="insight-icon home-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                </div>
+                <div class="insight-content">
+                    <span class="insight-label" data-i18n="homeload_title">Home Load</span>
+                    <span class="insight-value" id="insightHome">0 W</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <main class="dashboard-content" id="dashboardView">
+            <section class="summary-grid">
+                <!-- CARD 1: BATTERY STATUS -->
+                <div class="summary-card battery-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="battery">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse" style="width: 40%;"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="7" width="16" height="10" rx="2" ry="2"></rect>
+                                <line x1="22" y1="11" x2="22" y2="13"></line>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="battery_title">Battery Status</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="radial-gauge-container" style="flex-direction: row; gap: 24px; justify-content: center; margin-bottom: 16px;">
+                             <!-- Gauge 1: Total Battery -->
+                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                 <div class="radial-gauge-wrapper">
+                                     <canvas id="radialGauge"></canvas>
+                                     <div class="radial-gauge-center">
+                                         <div class="radial-gauge-value" id="valSOC"><span data-counter="batterySoc">0</span><span class="percent-sign">%</span></div>
+                                         <div class="radial-gauge-label" id="radialGaugeLabel">-- kWh</div>
+                                     </div>
+                                 </div>
+                                 <span style="font-size: 11px; font-weight: 600; color: var(--text-secondary); opacity: 0.8;" data-i18n="battery_total_label">Tổng</span>
+                             </div>
+                             
+                             <!-- Gauge 2: Usable Battery -->
+                             <div style="display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                 <div class="radial-gauge-wrapper">
+                                     <canvas id="usableRadialGauge"></canvas>
+                                     <div class="radial-gauge-center">
+                                         <div class="radial-gauge-value" id="valUsableSOC">--<span class="percent-sign">%</span></div>
+                                         <div class="radial-gauge-label" id="valUsableKwh">-- kWh</div>
+                                     </div>
+                                 </div>
+                                 <span style="font-size: 11px; font-weight: 600; color: #1dd1a1;" data-i18n="battery_usable_label">Có thể dùng</span>
+                             </div>
+                         </div>
+                        <div class="soc-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="socBar" style="width: 0%;"></div>
+                                <span class="progress-text" data-i18n="battery_title">Battery</span>
+                            </div>
+                        </div>
+                        <div class="soc-container" style="margin-top: -8px;">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="chargeTimeBar" style="width: 0%;"></div>
+                                <span class="progress-text" id="chargeTimeText">--</span>
+                            </div>
+                        </div>
+                        <div class="main-metric flex-row">
+                            <div>
+                                <span class="value-large" id="valBatPower"><span data-counter="batPower">0</span></span> <span class="unit">W</span>
+                            </div>
+                            <span class="status-badge-pill" id="valBatStatus">IDLE</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="battery" data-color="#1dd1a1" data-fill="rgba(29, 209, 161, 0.08)"></div>
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="voltage">Voltage:</span>
+                                    <span class="val" id="valBatVolt">0 V</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="current">Current:</span>
+                                    <span class="val" id="valBatCurr">0 A</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="temperature">Temperature:</span>
+                                    <span class="val" id="valBatTemp">0 °C</span>
+                                </div>
+                            </div>
+                            <div class="border-top-dashed">
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_charged">Today Charged:</span>
+                                    <span class="val" id="valBatChgDay">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_discharged">Today Discharged:</span>
+                                    <span class="val" id="valBatDischgDay">0.0 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2: SOLAR PV -->
+                <div class="summary-card solar-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="solar">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-placeholder" style="width: 40%;"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="solar_title">Solar Production</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric">
+                            <span class="value-large" id="valSolarPower"><span data-counter="solarPower">0</span></span> <span class="unit">W</span>
+                        </div>
+                        <div class="sub-metric">
+                            <span data-i18n="todays_energy">Today's Energy:</span> <span id="valSolarEnergy"><span data-counter="solarEnergy">0.0</span> kWh</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="solar" data-color="#ff9f43" data-fill="rgba(255, 159, 67, 0.08)"></div>
+                        <div class="detail-list pv-details">
+                            <div class="detail-item">
+                                <span class="label">PV1:</span>
+                                <span class="val" id="valPV1">0 W / 0 V</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">PV2:</span>
+                                <span class="val" id="valPV2">0 W / 0 V</span>
+                            </div>
+                        </div>
+                        <div class="border-top-dashed" style="margin-top: 12px;">
+                            <div class="detail-item justify-between">
+                                <span class="label" data-i18n="home_usage">🏠 Home Usage:</span>
+                                <span class="val" id="valHomeUsageW" style="color: #9c88ff; font-size: 16px; font-weight: 700;"><span data-counter="homeUsage">0</span> W</span>
+                            </div>
+                            <div class="detail-item justify-between">
+                                <span class="label" data-i18n="consumption_today">Today Consumption:</span>
+                                <span class="val" id="valHomeConsumDay" style="color: #9c88ff;">0.0 kWh</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: HOME LOAD -->
+                <div class="summary-card load-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="load">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="homeload_title">Home Load</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric">
+                            <span class="value-large" id="valLoadPower"><span data-counter="loadPower">0</span></span> <span class="unit">W</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="load" data-color="#9c88ff" data-fill="rgba(156, 136, 255, 0.08)"></div>
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="apparent_power">Apparent Power:</span>
+                                    <span class="val" id="valLoadVA">0 VA</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="load_voltage">Load Voltage:</span>
+                                    <span class="val" id="valLoadVolt">0 V</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="inverter_temp">Inverter Temp:</span>
+                                    <span class="val" id="valInvTemp">0 °C</span>
+                                </div>
+                            </div>
+                            <div class="border-top-dashed">
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_home_consumption">Today Home Consumption:</span>
+                                    <span class="val" id="valLoadEnergy">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_grid_import">Today Grid Import:</span>
+                                    <span class="val" id="valHomeGridImport">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_eps_consumption">Today EPS Consumption:</span>
+                                    <span class="val" id="valEPSEnergy">0.0 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4: GRID CONNECTION -->
+                <div class="summary-card grid-card skeleton-container">
+                    <!-- Skeleton overlay -->
+                    <div class="skeleton-overlay" data-skeleton="grid">
+                        <div class="skeleton-card">
+                            <div class="skeleton-header">
+                                <div class="skeleton-circle"></div>
+                                <div class="skeleton-placeholder" style="width: 50%;"></div>
+                            </div>
+                            <div class="skeleton-pulse"></div>
+                            <div class="skeleton-line" style="width: 70%;"></div>
+                            <div class="skeleton-line" style="width: 55%;"></div>
+                            <div class="skeleton-line" style="width: 65%;"></div>
+                            <div class="skeleton-line" style="width: 45%;"></div>
+                        </div>
+                    </div>
+                    <div class="card-header">
+                        <div class="icon-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L4 22h16L12 2zm-4 15h8M7 11h10M12 2v20M5 22l7-10 7 10"></path>
+                            </svg>
+                        </div>
+                        <h3 data-i18n="grid_title">Grid Connection</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="main-metric flex-row">
+                            <div>
+                                <span class="value-large" id="valGridPower"><span data-counter="gridPower">0</span></span> <span class="unit">W</span>
+                            </div>
+                            <span class="status-badge-pill warning" id="valGridStatus">IMPORTING</span>
+                        </div>
+                        <div class="sparkline-wrapper" data-sparkline="grid" data-color="#54a0ff" data-fill="rgba(84, 160, 255, 0.08)"></div>
+                        <div class="detail-list">
+                            <div class="detail-row">
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="voltage">Voltage:</span>
+                                    <span class="val" id="valGridVolt">0 V</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="frequency">Frequency:</span>
+                                    <span class="val" id="valGridFreq">0 Hz</span>
+                                </div>
+                                <div class="detail-col">
+                                    <span class="label" data-i18n="power_factor">Power Factor:</span>
+                                    <span class="val" id="valGridPF">0.000</span>
+                                </div>
+                            </div>
+                            <div class="border-top-dashed">
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_imported">Today Imported:</span>
+                                    <span class="val" id="valGridImpDay">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="today_exported">Today Exported:</span>
+                                    <span class="val" id="valGridExpDay">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="total_import">Total Import:</span>
+                                    <span class="val" id="valGridImpAll">0.0 kWh</span>
+                                </div>
+                                <div class="detail-item justify-between">
+                                    <span class="label" data-i18n="total_export">Total Export:</span>
+                                    <span class="val" id="valGridExpAll">0.0 kWh</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Card -->
+            <section class="chart-section card skeleton-container">
+                <!-- Skeleton overlay -->
+                <div class="skeleton-overlay" data-skeleton="chart">
+                    <div class="skeleton-card">
+                        <div class="skeleton-header">
+                            <div class="skeleton-circle" style="width: 20px; height: 20px;"></div>
+                            <div class="skeleton-placeholder" style="width: 40%;"></div>
+                        </div>
+                        <div class="skeleton-pulse" style="width: 100%; height: 180px;"></div>
+                    </div>
+                </div>
+                <div class="chart-header">
+                    <span class="accent-bar"></span>
+                    <h2 data-i18n="chart_title">Power Analytics (Live Trends)</h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="liveChart"></canvas>
+                </div>
+            </section>
+        </main>
+
+
+
+        <!-- Settings Modal -->
+        <div class="modal-backdrop hidden" id="settingsModal">
+            <div class="settings-modal">
+                <div class="modal-header">
+                    <h2 data-i18n="settings_title">Connection Settings</h2>
+                    <button class="close-btn" id="closeSettingsBtn" aria-label="Close Settings">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label for="ui_language" data-i18n="language_label">Language / Ngôn ngữ</label>
+                            <select id="ui_language" name="ui_language">
+                                <option value="en" data-i18n="language_option_en">English</option>
+                                <option value="vi" data-i18n="language_option_vi">Tiếng Việt</option>
+                            </select>
+                            <small class="form-helper" data-i18n="language_helper">Chọn ngôn ngữ hiển thị cho giao diện.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="ui_theme" data-i18n="theme_label">Giao diện</label>
+                            <select id="ui_theme" name="ui_theme">
+                                <option value="dark" data-i18n="theme_dark">Tối</option>
+                                <option value="light" data-i18n="theme_light">Sáng</option>
+                                <option value="cyber" data-i18n="theme_cyber">Cyber</option>
+                                <option value="rosegold" data-i18n="theme_rosegold">Rose Gold</option>
+                                <option value="nature" data-i18n="theme_nature">Nature</option>
+                                <option value="glass" data-i18n="theme_glass">Glass</option>
+                                <option value="synthwave" data-i18n="theme_synthwave">Synthwave</option>
+                                <option value="cyberpunk" data-i18n="theme_cyberpunk">Cyberpunk</option>
+                                <option value="ocean" data-i18n="theme_ocean">Ocean</option>
+                                <option value="sunset" data-i18n="theme_sunset">Sunset</option>
+                                <option value="hacker" data-i18n="theme_hacker">Hacker</option>
+                                <option value="win11" data-i18n="theme_win11">Windows 11</option>
+                                <option value="win10" data-i18n="theme_win10">Windows 10</option>
+                                <option value="system" data-i18n="theme_system">Theo hệ thống</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="inverter_ip" data-i18n="dongle_ip_label">Wi-Fi Dongle IP Address</label>
+                            <input type="text" id="inverter_ip" name="inverter_ip" placeholder="e.g. 192.168.1.241" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="inverter_port" data-i18n="port_label">Port</label>
+                                <input type="number" id="inverter_port" name="inverter_port" placeholder="8000" required>
+                            </div>
+                            <div class="form-group col">
+                                <label for="poll_interval" data-i18n="poll_interval_label">Poll Interval (s)</label>
+                                <input type="number" id="poll_interval" name="poll_interval" min="2" max="60" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dongle_serial" data-i18n="dongle_serial_label">Wi-Fi Dongle Serial (10 chars)</label>
+                            <input type="text" id="dongle_serial" name="dongle_serial" placeholder="e.g. BA12345678" maxlength="10" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inverter_serial" data-i18n="inverter_serial_label">Inverter Serial (10 chars)</label>
+                            <input type="text" id="inverter_serial" name="inverter_serial" placeholder="e.g. 9876543210" maxlength="10" required>
+                        </div>
+                        
+                        <!-- Battery settings for time estimation -->
+                        <div class="border-top-dashed" style="margin: 15px 0; padding-top: 15px;">
+                            <h4 style="margin-bottom: 12px; color: var(--color-primary, #10ac84); font-size: 15px;" data-i18n="battery_settings_title">Cấu hình Pin & Hiệu suất</h4>
+                            <div class="form-row">
+                                <div class="form-group col">
+                                    <label for="bat_capacity" data-i18n="battery_capacity_label">Dung lượng Pin (Ah)</label>
+                                    <input type="number" id="bat_capacity" name="bat_capacity" min="10" max="2000" placeholder="Ví dụ: 314" required>
+                                </div>
+                                <div class="form-group col">
+                                    <label for="soc_cutoff" data-i18n="soc_cutoff_label">Ngưỡng ngắt xả (%)</label>
+                                    <input type="number" id="soc_cutoff" name="soc_cutoff" min="0" max="90" placeholder="Ví dụ: 20" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inverter_efficiency" data-i18n="inverter_efficiency_label">Hiệu suất biến tần (%)</label>
+                                <input type="number" id="inverter_efficiency" name="inverter_efficiency" min="50" max="100" placeholder="Ví dụ: 95" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <input type="checkbox" id="force_simulation" name="force_simulation">
+                            <label for="force_simulation" data-i18n="demo_mode_label">Enable Simulated Demo Mode</label>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="cancelSettingsBtn" data-i18n="cancel_btn">Cancel</button>
+                            <button type="submit" class="btn btn-primary" data-i18n="save_btn">Save Settings</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
